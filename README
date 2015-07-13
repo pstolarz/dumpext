@@ -1,0 +1,195 @@
+dumpext
+=======
+
+This is a WinDbg debugger extension library providing various tools to analyse,
+dump and fix (restore) Microsoft Portable Executable files for both 32 (PE) and
+64-bit (PE+) platforms. The library is intended to be used by advanced reverse
+engineers, malware analysts for their work with malicious software, packers or
+viruses.
+
+Features
+--------
+
+dumpext provides rich set of features like:
+ - Support for both 32/64-bit PE files formats,
+ - Information related to virtually all PE files details like headers, sections,
+   exports, imports (including delayed and bound imports), thread local storage,
+   relocations, resource tree, exception spec. (for x64 platforms) and more...
+ - Offset specific information, e.g. address to RVA, owning module, file pointer
+   etc.
+ - Support of PE CRC restore,
+ - Support for originally bounded imports restore,
+ - Various heuristic scans (IAT/IDT) for corrupted, destroyed imports,
+ - IDT table localizations,
+ - Imports tables fixing with full forwarders support,
+ - Resource fixing,
+ - Various PE headers optimizations and fixing methods (useful for advanced
+   packers which may remove some crucial PE file information when they are no
+   more needed after the loading phase),
+ - Dumping fixed PE file or part of the file (sections) into the file.
+ - And much more...
+
+As may be seen, the features may be divided into two sets:
+ - Informational: dump_pe_info, dump_offset_info
+   which are useful for wide range of reverse engineers not specifically interested
+   in the PE packers area,
+ - Executives: the rest of commands; devoted mainly for PE packers analysts and
+   malware reverse engineers working with malicious software using such packers
+   or other methods of PE files protections.
+
+   The library have been used for many years by the author to defeat many various
+   PE files packers (e.g. infamous ASProtect).
+
+dumpext help command output
+---------------------------
+
+dumpext: PE files fix, dump & analysis
+
+dump_imp_scan iat [-w] [[-s *|n]|[-a|-r addr -l len]] [mod_base]
+    IAT imports scanning at specified memory range or of a given module with a
+    base mod_base. This is the most generic method for import scanning.
+    -s,r,a,l: Scanning range specification; that is a section number ('*' denotes
+        all sections) or a memory range specified by an address or rva.
+    -w: Write resolved imports to the config file.
+dump_imp_scan idt [-w] [-a|-r addr [-l len]] [mod_base]
+    IDT imports scanning at specified address of the IDT table or of a given module
+    with a base mod_base. This command may be used only if IDT location is known
+    and the IDT is not corrupted.
+    -a,r,l: Specifies an address or rva of the IDT table with an optional length
+        constraint.
+    -w: Write resolved imports to the config file.
+
+dump_pe [-s *|n] [mod_base]
+    Dump a module with an address mod_base to a file.
+    -s: Specifies section to extract into separate file. '*' denotes all sections.
+
+dump_pe_info [header] [-m] [-h] [-d] [-s] [mod_base]
+    Show PE details contained in the headers' part of a module with the address
+    mod_base.
+    -m: DOS header
+    -h: PE headers (file and optional)
+    -d: PE directories info
+    -s: Sections table
+dump_pe_info export|import|bimport|dimport|debug|lconf|rsrc|tls|reloc|except
+             [-c|-C] [-x] [-v|-V] [-a|-r addr [-l len]] [mod_base]
+    Show PE directory details at specified addr or of a given module with a base
+    mod_base.
+    -c,C: {rsrc} Show resource capacity details (-c); exclusively (-C).
+    -x: {import} Use the imports spec. format of the config file in the output.
+    -v,V: {except} Show verbose (-v) and even more verbose (-V) exception table
+        details. All the provided informations are platform specific.
+    -a,r: {all cases} Specifies an address or rva of the directory.
+    -l: {import,bimport,dimport,reloc,except} An optional length constraint.
+
+dump_offset_info [-v] {-a addr}|{-f ftpr [mod_base]}
+    Show address or file pointer details
+    -a: Address details
+    -f: File pointer details
+    -v: Show virtual memory details.
+
+dump_sects_chrt [-c] [mod_base]
+    Analyse PE headers to recognize sections names and characteristics. Print
+    the result in a format ready to use in the configuration file. Useful for
+    packers destroying mentioned data.
+    -c: Read and take into account the configuration (PE headers, sections,
+        directories)
+
+dump_serach idt [-x] [[-s *|n]|[-a|-r addr -l len]] [mod_base]
+    Search for and analyse the IDT table with IAT addresses matching the ones
+    specified in the imports spec. in the config file. The command shall be used
+    for searching destination location of the fixed imports with not modified
+    IDT table.
+    -s,r,a,l: Searching range specification; that is a section number ('*'
+        denotes all sections) or a memory range specified by an address or rva.
+    -x: Silent mode. In case of successful search the result is printed in a
+        format used by the configuration file.
+
+dump_conf [conf_file]
+    Set configuration file to conf_file. If the file is not specified the current
+    configuration file is displayed.
+
+help
+    Show this help.
+
+Compiling and Installing
+------------------------
+
+Prerequisites:
+ - MS SDK with cl and nmake; no need for MS VisualStudio,
+ - Debugging Tools for Windows (WinDbg) with its SDK,
+
+Compilation:
+ - Set required building environment depending on your target platform (x86/x64.
+   debug/release etc.) by calling "SetEnv.Cmd" with proper arguments,
+ - Inspect Makefile for your WinDng debugger localization by setting WINDBG_DIR
+   parameter and make the library:
+
+   make
+
+ - The result is dumpext.dll library located in the sources directory. Copy the
+   dll file into WINDBG_DIR\winext directory. The library is now installed.
+
+Loading and testing
+-------------------
+
+In WinDbg command window put:
+
+0:000:x86> .load dumpext
+
+Help info:
+
+0:000:x86> !dumpext.help
+
+Dump arbitrary PE file already loaded into the debugger and not protected by any
+packer. Example of an output for 64-bit explorer.exe:
+
+0:000> !dump_pe explorer
+INFO: Base address of the dumped module: 0x00000000ff1c0000 [explorer.exe]
+INFO: Updated optional_header/SizeOfCode from 0x000B7C00 to 0x000B8000
+INFO: Updated optional_header/SizeOfInitializedData from 0x00205600 to 0x00207000
+INFO: PE headers have been dumped to the output file
+INFO: PE sections have been dumped to the output file
+INFO: IAT table successfully fixed
+INFO: PE checksum written: 0x002C1D54
+INFO: Bound imports:
+ Import ADVAPI32.dll, Timestamp: 0x556365E3 with 1 forwarder(s)
+  Forwarder ntdll.DLL, Timestamp: 0x556366F2
+ Import KERNEL32.dll, Timestamp: 0x556366FC with 1 forwarder(s)
+  Forwarder ntdll.DLL, Timestamp: 0x556366F2
+ Import GDI32.dll, Timestamp: 0x54F7E29C
+ Import USER32.dll, Timestamp: 0x4CE7C9F1 with 1 forwarder(s)
+  Forwarder ntdll.DLL, Timestamp: 0x556366F2
+ Import msvcrt.dll, Timestamp: 0x4EEB033F with 1 forwarder(s)
+  Forwarder ntdll.DLL, Timestamp: 0x556366F2
+ Import ntdll.DLL, Timestamp: 0x556366F2
+ Import SHLWAPI.dll, Timestamp: 0x4CE7C9AB
+ Import SHELL32.dll, Timestamp: 0x54DD89C7
+ Import ole32.dll, Timestamp: 0x4CE7C92C
+ Import OLEAUT32.dll, Timestamp: 0x54754E4A
+ Import EXPLORERFRAME.dll, Timestamp: 0x4CE7C6A8
+ Import UxTheme.dll, Timestamp: 0x4A5BE093
+ Import POWRPROF.dll, Timestamp: 0x4A5BE062
+ Import dwmapi.dll, Timestamp: 0x4A5BDF27
+ Import slc.dll, Timestamp: 0x4A5BE063
+ Import gdiplus.dll, Timestamp: 0x55346E73
+ Import Secur32.dll, Timestamp: 0x55636730 with 1 forwarder(s)
+  Forwarder SSPICLI.DLL, Timestamp: 0x55636743
+ Import RPCRT4.dll, Timestamp: 0x53C339EE
+ Import PROPSYS.dll, Timestamp: 0x4CE7C94A
+INFO: Imports have been bound
+INFO: Dumping process finished with success
+
+The dumped explorer.exe image is located in WINDBG_DIR\dump.out
+
+Configuration file
+------------------
+
+dump_pe command uses a configuration file which controls its behaviour. By
+default the file is looked in the same directory as the extension library and
+under dumpext.conf name. This can be changed using dump_conf command.
+
+Refer to the dumpext.conf file in the source directory for more details.
+
+License
+-------
+GNU GENERAL PUBLIC LICENSE v2. See LICENSE file for details.

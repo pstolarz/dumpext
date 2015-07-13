@@ -1,0 +1,10 @@
+EXPORTS
+    DebugExtensionInitialize
+    dump_imp_scan
+    dump_pe
+    dump_pe_info
+    dump_offset_info
+    dump_sects_chrt
+    dump_serach
+    dump_conf
+    help
