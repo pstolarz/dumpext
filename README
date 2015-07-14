@@ -17,9 +17,9 @@ dumpext provides a rich set of features like:
    relocations, resources tree, exception spec. (for x64 platforms) and more...
  - Offset specific informations like memory address to RVA, owning module, file
    pointer etc.
- - Support of PE CRC restore,
+ - Support for PE CRC restore,
  - Support for originally bounded imports restore,
- - Various heuristic scans (IAT/IDT) for corrupted, destroyed imports,
+ - Various heuristic scans (IAT/IDT) for corrupted/destroyed imports,
  - IDT table localizations,
  - Imports tables fixing with full forwarders support,
  - Resources fixing,
@@ -124,7 +124,7 @@ Compilation:
  - Inspect Makefile for your WinDbg debugger localization by setting WINDBG_DIR
    parameter and make the library:
 
-   make
+   nmake
 
  - The result is dumpext.dll library located in the sources directory. Copy the
    dll file into WINDBG_DIR\winext directory. The library is now installed.
