@@ -48,7 +48,7 @@ DebugExtensionInitialize(PULONG Version, PULONG Flags)
 }
 
 /* Recognize command string 'p_cmd' in arguments input 'args'. Min recognized
-   length of the command is passed by 'min_len'. If command has been recognized
+   length of the command is passed by 'min_len'. If a command has been recognized
    TRUE is returned and 'p_args' will point just after the recognized command
    in 'args'.
  */
@@ -67,8 +67,8 @@ static BOOL is_cmd(PCSTR args, const char *p_cmd, size_t min_len, PCSTR *p_args)
     if (!min_len && !cmd_match)
     {
         /* for default command and not matching input: if the input indicates
-           the command's flags (staring by '-') the command matches, since it
-           seems it has been omitted; elsewhere some other command is provided
+           the command's flags (staring by '-') then the command matches, since
+           it seems it has been omitted; else some other command is provided
            - return FALSE */
         ret = args[i]=='-';
     } else
@@ -692,9 +692,7 @@ finish:
     return ret;
 }
 
-/*
-    dump_conf [conf_file]
- */
+/* dump_conf [conf_file] */
 HRESULT CALLBACK
 dump_conf(PDEBUG_CLIENT4 Client, PCSTR args)
 {
@@ -722,6 +720,7 @@ dump_conf(PDEBUG_CLIENT4 Client, PCSTR args)
     return S_OK;
 }
 
+/* help info */
 HRESULT CALLBACK
 help(PDEBUG_CLIENT4 Client, PCSTR args)
 {

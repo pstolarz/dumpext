@@ -19,8 +19,7 @@ const char *PROP_FILE = &prop_file[0];
 static char home_path[MAX_PATH+1];
 const char *HOME_PATH = &home_path[0];
 
-/*
-    conf section & params names
+/* Sections & parameters names
  */
 const char *PROP_SECT_OPTH = "optional_header";
 const char *PROP_OPTH_ENTRY_POINT = "AddressOfEntryPoint";
@@ -92,8 +91,7 @@ const char *PROP_RSRCFIX_PADD = "PaddRsrc";
 const char *PROP_RSRCFIX_TMPFILE = "TmpRsrcFile";
 const char *PROP_RSRCFIX_KEEP_TMPFILE = "KeepTmpRsrcFile";
 
-/*
-    special param values & default values
+/* Special parameters values & default values
  */
 const char *OUT_DUMP_DEF_FILE = "dump.out";
 const char *OUT_TMP_RSRC_DEF_FILE = "$rsrc.tmp";    /* in the tmp dir */

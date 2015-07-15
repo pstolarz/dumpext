@@ -64,10 +64,10 @@ ULONG write_memory(ULONG64 addr, PVOID p_buf, ULONG buf_sz, PULONG p_cb);
 BOOL get_expression(PCSTR pc_expr, ULONG64 *p_val, PCSTR *ppc_rem);
 
 /* Copy target's string 'targ_in_addr' into local buf 'pc_out_buf' ('out_buf_len'
-   long, which should be a multiplier of 4). The func checks if the copied string
+   long, which should be a divisible by 4). The func checks if the copied string
    fits into the buffer and returns FALSE if the buffer is too small for the
    string. 'end_chr' specifies end-of-string char (by default 0). Copied string
-   is NULL terminated w/o ending char.
+   is NULL terminated w/o the end-of-string char.
  */
 BOOL string_cpy_lt(
     char *pc_out_buf, ULONG64 targ_in_addr, size_t out_buf_len, int end_chr=0);
@@ -111,7 +111,7 @@ typedef enum _rngspc_rc_t
 
 /* Read range specification from command flags whose description is indicated
    by 'p_fdsc' and write the result under 'p_rng'. The func reads all recognized
-   flags and modifies '*p_fdsc' accordingly.
+   flags and modifies *p_fdsc accordingly.
  */
 rngspc_rc_t get_range_spec(
     PCSTR *p_args, flag_desc_t *p_fdsc, UINT n_flags, rng_spec_t *p_rng);

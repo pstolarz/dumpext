@@ -97,7 +97,7 @@ typedef struct _prnt_dir_hndl_t
 #define RVA2ADDR(rva,mb) ((rva) ? ((rva)+(mb)) : 0)
 #define ADDR2RVA(adr,mb) ((DWORD)((adr) ? ((adr)-(mb)) : 0))
 
-/* Read DOS & NT headers for module with base 'mod_base'. Write them under
+/* Read DOS & NT headers for a module with base 'mod_base'. Write them under
    'p_dos_hdr' & 'p_nt_hdrs'. If 'p_sectab_addr' is not NULL the address of the
    section table will be written under the pointer. If 'b_logs' is TRUE print
    error info. Returns TRUE for success.
@@ -113,8 +113,8 @@ BOOL read_pe_headers(ULONG64 mod_base, IMAGE_DOS_HEADER *p_dos_hdr,
 DWORD read_sectab(const image_nt_headers_t *p_nt_hdrs, ULONG64 sectab_addr,
     IMAGE_SECTION_HEADER *p_sectab, BOOL b_fix_empty_rng, BOOL b_logs);
 
-/* Find data directory entry 'dir_id' in the optional header and write its address
-   under the 'pp_dir_entry'. If 'b_logs' is TRUE print error info. Returns TRUE
+/* Find a data directory entry 'dir_id' in the optional header and write its
+   address under 'pp_dir_entry'. If 'b_logs' is TRUE print error info. Returns TRUE
    for success.
  */
 BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,

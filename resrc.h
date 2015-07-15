@@ -19,8 +19,8 @@
 /* Print resources details */
 void print_rsrc(ULONG64 mod_base, const rng_spec_t *p_rng, DWORD flags);
 
-/* Fix resources in dumped file. The func modifies resource directory info
-   contained in the NT header inside dump pe handle (pointed by 'p_hndl').
+/* Fix resources in the dumped file. The func modifies resource directory info
+   contained in the NT header inside the dump_pe handle (pointed by 'p_hndl').
  */
 BOOL fix_rsrc(const dump_pe_hndl_t *p_hndl);
 

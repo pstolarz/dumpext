@@ -27,18 +27,18 @@ typedef enum _iscan_tpy_t
 void scan_imports(ULONG64 mod_base,
     iscan_tpy_t iscan_tpy, const rng_spec_t *p_rng, DWORD flags);
 
-/* Write import patch into the dumped file. The function modifies IDT & IAT
-   directories info contained in the NT header inside dump pe handle (pointed by
+/* Write an import patch into the dumped file. The function modifies IDT & IAT
+   directories info contained in the NT header inside dump_pe handle (pointed by
    'p_hndl').
  */
 BOOL patch_imports(const dump_pe_hndl_t *p_hndl);
 
-/* Fix IAT table for each imported module by copy corresponding ILT to the IAT's
-   place. Returns TRUE on success.
+/* Fix the IAT table for each imported module by copy corresponding ILT to the
+   IAT's place. Returns TRUE on success.
  */
 BOOL fix_iat(const dump_pe_hndl_t *p_hndl);
 
-/* Bind imports of file 'pc_pe_file'. Return TRUE on success. */
+/* Bind imports of a file 'pc_pe_file'. Return TRUE on success. */
 BOOL bind_imports(const char *pc_pe_file);
 
 #define PRNTIMP_IMPSPEC     0x01U
@@ -58,8 +58,8 @@ void print_delay_imps(ULONG64 mod_base, const rng_spec_t *p_rng);
 #define SRCHIDT_NO_ORD      0x01U
 #define SRCHIDT_SILENT      0x02U
 
-/* Search range described by spec. pointed by 'p_rng' for the IDT table witch
-   matches IAT addresses as specified in the imports spec. configuration. print
+/* Search a range described by spec. pointed by 'p_rng' for the IDT table witch
+   matches IAT addresses as specified in the imports spec. configuration. Print
    results. If 'p_rng' is NULL the func tries to recognize best section(s) to
    search.
  */

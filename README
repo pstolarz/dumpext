@@ -14,11 +14,11 @@ dumpext provides a rich set of features like:
  - Support for both 32/64-bit PE files formats,
  - Informations related to virtually all PE files details like headers, sections,
    exports, imports (including delayed and bound), thread local storage (TLS),
-   relocations, resources tree, exception spec. (for x64 platforms) and more...
+   relocations, resources tree, exception spec. (x64 platforms) and more...
  - Offset specific informations like memory address to RVA, owning module, file
    pointer etc.
  - Support for PE CRC restore,
- - Support for originally bounded imports restore,
+ - Support for originally bound imports restore,
  - Various heuristic scans (IAT/IDT) for corrupted/destroyed imports,
  - IDT table localizations,
  - Imports tables fixing with full forwarders support,
@@ -37,7 +37,7 @@ As may be seen, the features may be divided into two sets:
    malware reverse engineers working with malicious software using such packers
    (or other methods of PE files protections).
 
-   The library have been used for many years by the author to defeat many various
+   The library has been used for many years by the author to defeat many various
    PE files packers (e.g. infamous ASProtect).
 
 dumpext help command output
@@ -115,7 +115,7 @@ Compiling and Installing
 ------------------------
 
 Prerequisites:
- - MS SDK with cl and nmake; no need for MS VisualStudio,
+ - MS SDK with cl, link and nmake; no need for MS Visual Studio,
  - Debugging Tools for Windows (WinDbg) with its SDK,
 
 Compilation:
@@ -126,19 +126,22 @@ Compilation:
 
    nmake
 
- - The result is dumpext.dll library located in the sources directory. Copy the
-   dll file into WINDBG_DIR\winext directory. The library is now installed.
+ - The result is dumpext.dll library located in the sources directory. Install it
+   by:
+
+   nmake install
+
 
 Loading and testing
 -------------------
 
 In WinDbg command window put:
 
-0:000:x86> .load dumpext
+0:000> .load dumpext
 
 Help info:
 
-0:000:x86> !dumpext.help
+0:000> !dumpext.help
 
 Dump arbitrary PE file, which has been already loaded into the debugger and not
 protected by a packer. Example of an output for 64-bit explorer.exe:
@@ -179,7 +182,8 @@ INFO: Bound imports:
 INFO: Imports have been bound
 INFO: Dumping process finished with success
 
-The dumped explorer.exe image is now located in WINDBG_DIR\dump.out
+The dumped explorer.exe image is now located in WINDBG_DIR\dump.out. Try to
+execute it.
 
 Configuration file
 ------------------

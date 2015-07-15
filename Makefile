@@ -1,6 +1,7 @@
-RM=del
 LD=link
 MAKE=nmake
+RM=DEL
+CP=COPY
 
 WINDBG_DIR=C:/Program Files/Debugging Tools for Windows (x64)
 
@@ -28,6 +29,9 @@ clean:
 
 cleanall: clean
 	$(RM) *.pch
+
+install: dumpext.dll
+	$(CP) $** "$(WINDBG_DIR)/winext"
 
 # precompiled common headers
 common.obj: common.cpp
