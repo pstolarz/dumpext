@@ -121,7 +121,8 @@ BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,
     IMAGE_DATA_DIRECTORY **pp_dir_entry, BOOL b_logs);
 
 /* The func returns some info about the 'rva' address basing on the section table
-   passed by 'p_sectab' and 'n_sects'. The following info is returned:
+   pointed by 'p_sectab' and 'n_sects' number of sections. The following info is
+   returned:
    - number of rva's owning section index (0 based): 'p_sect_i'. Always set if
      the func returns TRUE.
    - number of remaining bytes from 'rva' to the end of the owning section's raw
@@ -136,7 +137,8 @@ BOOL get_rva_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects, DWORD rva
     DWORD *p_sect_i, DWORD *p_n_raw_rem, DWORD *p_n_va_rem, DWORD *p_rptr);
 
 /* The func returns some info about the 'rptr' pointer to raw data basing on the
-   section table passed by 'p_sectab' and 'n_sects'. The following info is returned:
+   section table pointed by 'p_sectab' and 'n_sects' number of sections. The
+   following info is returned:
    - number of rptr's owning section index (0 based): 'p_sect_i'. Always set if
      the function returns TRUE.
    - number of remaining bytes from 'rptr' to the end of the owning section's

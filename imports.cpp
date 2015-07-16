@@ -152,11 +152,10 @@ enum delay_imp_attr
     dlattr_rva = 0x1
 };
 
-/* Read export directory and write data into the structure pointed by 'p_ed'.
-   The func requires p_ed->mod_base to be set to the base of the module whose
-   export dir need to be read. If 'b_logs' is TRUE print error info.
-
-   Return TRUE for success, FALSE otherwise
+/* Read the export directory and write the data into the structure pointed by
+   'p_ed'. The func requires p_ed->mod_base to be set to the base of the module
+   whose export dir need to be read. If 'b_logs' is TRUE print error info. Return
+   TRUE for success, FALSE otherwise
  */
 static BOOL get_mod_exp_dir(mod_exp_dir_t *p_ed, BOOL b_logs)
 {
@@ -552,19 +551,18 @@ finish:
     return ret;
 }
 
-/* Get export information from a dll module about a proc pointed by the
+/* Get the export information from a dll module about a proc pointed by the
   'proc_addr'. 'ords', 'hints' and 'proc_names' are populated with the info
-   from the dll's export tab. These tabs have the same number of output elems
+   from the dll's export tab. These tabs have the same number of output elements
    stored on response under the addr of 'p_n_synons'. If an elem in the
-   'proc_names' is NULL, then the corresponding item has not name (only an
-   ordinal). The pointers of 'proc_names' points to addresses in the
+   'proc_names' is NULL, then the corresponding item has no name (only an
+   ordinal). The pointers of 'proc_names' point to addresses in the
    'pc_names_buf' with the length 'names_buf_sz'. If 'p_proc_mod_base' points to
    value other than NULL, the value indicates the module base address used for
    resolving the proc_addr. If the value is NULL the owning module of the
    proc_addr will be used. 'p_proc_mod_base' will be set to the owning module base.
    'pc_mod_name' points to value other than NULL, it will get the owner's module
    name. Min size of this buf is MAX_PATH+1. If 'b_logs' is TRUE print error info.
-
    Returns TRUE for success, FALSE - error or 'proc_addr' not found.
  */
 static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base,
@@ -951,9 +949,8 @@ finish:
 
 /* Add to the scan imports handle's list of procs of an importing module. If
    required the importing module itself may also be added. The input params
-   as returned by the resv_proc_name_mod().
-
-   TRUE returned on success. FALSE: no memory error.
+   as returned by the resv_proc_name_mod(). TRUE returned on success. FALSE: no
+   memory error.
  */
 static BOOL add_imp_mod_proc(scan_imps_hndl_t *p_hndl, DWORD ord, DWORD hint,
     const char *pc_proc_name, ULONG64 mod_iat_addr, ULONG64 mod_base,
@@ -1084,8 +1081,8 @@ static BOOL get_owning_mod(scan_imps_hndl_t *p_hndl, ULONG64 mod_iat_addr,
               IAT table,
            2. For each of the module, count forwards which reference to the
               modules from step 1,
-           3. The owning module is the one with maximal number of the references
-              from step 2
+           3. The owning module is assumed to be the one with maximal number of
+              the references from step 2.
          */
 
         /* step 1
@@ -1878,9 +1875,7 @@ static void get_continuous_idt_sizes(const imp_mod_desc_t *p_imp_mods,
    The ILT tables are written in places pointed by inspected IDT. Hint/name
    table will be placed in rva pointed by 'hnt_rva'. Module names will be part
    of the hint/name table if 'modnms_rva' is -1 or will be placed starting at
-   rva 'modnms_rva'.
-
-   Returns TRUE if the patch has been written.
+   rva 'modnms_rva'. Returns TRUE if the patch has been written.
  */
 static BOOL write_following_idt(const dump_pe_hndl_t *p_hndl,
     const imp_mod_desc_t *p_imp_mods, DWORD n_mods, DWORD idt_rva,
