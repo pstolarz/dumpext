@@ -18,7 +18,7 @@
 #include <errno.h>
 
 /* max number of symbols in a dll with an identical addr */
-#define MAX_SYNONS   10U
+#define MAX_SYNONS   20U
 
 /* max number of forwarders' modules taken into account
    during resolving an owning module of its IAT table */
@@ -654,10 +654,10 @@ static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base
                     /* don't brake and search for more entries with the same addr */
                 } else {
                     if (b_logs)
-                        err_dbgprintf(
+                        warn_dbgprintf(
                             "Too much symbols with the same addr [0x%p] in the "
-                            "module (base: 0x%p)", proc_addr, srch_mod_base);
-                    goto err;
+                            "module (base: 0x%p); ignored\n",
+                            proc_addr, srch_mod_base);
                 }
             }
         }
