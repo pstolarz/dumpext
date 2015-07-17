@@ -180,8 +180,8 @@ static BOOL get_mod_exp_dir(mod_exp_dir_t *p_ed, BOOL b_logs)
     if (!exp_dd_rva || !p_ed->exp_dd_sz) {
         if (b_logs)
             err_dbgprintf(
-            "No export directory for a module with the base addr: 0x%p\n",
-            p_ed->mod_base);
+                "No export directory for a module with the base addr: 0x%p\n",
+                p_ed->mod_base);
         goto finish;
     }
 
@@ -507,13 +507,13 @@ static BOOL get_frwrd_proc_addr(scan_imps_hndl_t *p_hndl,
         if (errno) {
             if (b_logs)
                 err_dbgprintf("Forwarder's ordinal number conversion "
-                "problem: %s\n", &proc_name[0]);
+                    "problem: %s\n", &proc_name[0]);
             goto finish;
         }
         if (ord < p_ed->ord_base) {
             if (b_logs)
                 err_dbgprintf("Forwarder's ordinal number [0x%04X] larger than "
-                "the ordinal base [0x%04X]\n", ord, p_ed->ord_base);
+                    "the ordinal base [0x%04X]\n", ord, p_ed->ord_base);
             goto finish;
         }
         ord = ord-p_ed->ord_base;
@@ -587,7 +587,7 @@ static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base
     {
         if (b_logs)
             err_dbgprintf("Unable to find a module owning the proc addr: 0x%p\n",
-            proc_addr);
+                proc_addr);
         goto err;
     }
 
@@ -647,17 +647,19 @@ static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base
                     continue;
             }
 
-            if (exp_proc_addr==proc_addr)
-            {
+            if (exp_proc_addr==proc_addr) {
                 if (*p_n_synons < MAX_SYNONS) {
                     ords[(*p_n_synons)++] = p_ed->ord_base+ord;
                     /* don't brake and search for more entries with the same addr */
                 } else {
-                    if (b_logs)
+                    if (b_logs) {
                         warn_dbgprintf(
                             "Too much symbols with the same addr [0x%p] in the "
-                            "module (base: 0x%p); ignored\n",
+                            "module (base: 0x%p); break searching for more "
+                            "symbol duplicates for this addr\n",
                             proc_addr, srch_mod_base);
+                    }
+                    break;
                 }
             }
         }
@@ -666,7 +668,7 @@ static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base
     if (*p_n_synons==0) {
         if (b_logs)
             err_dbgprintf("Unable to find the proc for the addr: 0x%p\n",
-            proc_addr);
+                proc_addr);
         goto err;
     }
 
@@ -715,7 +717,7 @@ static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base
                 } else {
                     if (b_logs)
                         warn_dbgprintf(
-                        "Buffer too small to store proc name %s [0x%p] from "
+                            "Buffer too small to store proc name %s [0x%p] from "
                             "module (base: 0x%p)", buf, proc_addr, srch_mod_base);
                 }
                 break;
@@ -785,10 +787,12 @@ static BOOL resv_proc_name_mod(scan_imps_hndl_t *p_hndl, ULONG64 mod_base,
            success but there is a need to inform about the duplicates */
         warn_dbgprintf(
             "Proc with many aliases has been found [0x%p]: ", proc_addr);
-        for (i=0; i<n_synons; i++) dbgprintf(
-            "%s#0x%04X, ", (proc_names[i] ? proc_names[i] : ""), ords[i]);
-        dbgprintf(
-            "Resolved to: %s!%s#0x%04X\n", mod_name, pc_out_proc_name, *p_out_ord);
+        for (i=0; i<n_synons; i++) {
+            dbgprintf("%s#0x%04X%s", (proc_names[i] ? proc_names[i] : ""),
+                ords[i], (i+1<n_synons ? ", " : ""));
+        }
+        dbgprintf("\n  Resolved to: %s!%s#0x%04X\n",
+                mod_name, pc_out_proc_name, *p_out_ord);
     }
 
     ret=TRUE;
@@ -1118,9 +1122,11 @@ static BOOL get_owning_mod(scan_imps_hndl_t *p_hndl, ULONG64 mod_iat_addr,
         }
 
         if (!n_mods) {
-            if (b_logs) err_dbgprintf(
-                "Can not recognize any module from the IAT table at 0x%p\n",
-                mod_iat_addr);
+            if (b_logs) {
+                err_dbgprintf(
+                    "Can not recognize any module from the IAT table at 0x%p\n",
+                    mod_iat_addr);
+            }
             goto finish;
         }
 
@@ -1150,9 +1156,11 @@ static BOOL get_owning_mod(scan_imps_hndl_t *p_hndl, ULONG64 mod_iat_addr,
         }
 
         if (mf_val==(UINT)-1) {
-            if (b_logs) err_dbgprintf(
-                "Can not recognize owning module of the IAT table at 0x%p\n",
-                mod_iat_addr);
+            if (b_logs) {
+                err_dbgprintf(
+                    "Can not recognize owning module of the IAT table at 0x%p\n",
+                    mod_iat_addr);
+            }
             goto finish;
         }
     }
@@ -1207,7 +1215,7 @@ static BOOL process_iat_elem(scan_imps_hndl_t *p_hndl,
         {
             if (b_logs)
                 err_dbgprintf("Can not establish an owning module for "
-                "the IAT table starting at: 0x%p\n", mod_iat_addr);
+                    "the IAT table starting at: 0x%p\n", mod_iat_addr);
             goto finish;
         }
         pc_mod_name = reslv_mod_name;
@@ -1334,7 +1342,8 @@ finish:
         if (p_hndl->n_mods) {
             dbgprintf(", currently resolved imports:\n");
             print_imp_spec(p_hndl);
-        } else dbgprintf("\n");
+        } else
+            dbgprintf("\n");
     }
     return ret;
 }
@@ -1493,7 +1502,8 @@ void scan_imports(ULONG64 mod_base,
         info_dbgprintf("IDT scanning starts at: 0x%p", scan_addr);
         if (scan_len!=(DWORD)-1)
             dbgprintf(", size constraint: 0x%04X\n", scan_len);
-        else dbgprintf("\n");
+        else
+            dbgprintf("\n");
 
         if (!process_idt(&hndl, scan_addr, scan_len)) goto finish;
     } else
@@ -1999,9 +2009,9 @@ static BOOL write_following_idt(const dump_pe_hndl_t *p_hndl,
         DWORD ilt_sz = ilt_elem_len*(p_mod->n_procs+1);
         if (ilt_n_raw_rem < ilt_sz) {
             err_dbgprintf("IDT follow[0x%p]: not enough space in section %d "
-                    "to store %s; rva: 0x%08X, size: 0x%04X\n", idt_addr,
-                    ilt_sect_i+1, (b_no_ilts ? "ILT in IAT" : "ILT"),
-                    ilt_rva, ilt_sz);
+                "to store %s; rva: 0x%08X, size: 0x%04X\n", idt_addr,
+                ilt_sect_i+1, (b_no_ilts ? "ILT in IAT" : "ILT"),
+                ilt_rva, ilt_sz);
             goto finish;
         }
 
@@ -3805,8 +3815,10 @@ void search_idt(ULONG64 mod_base, const rng_spec_t *p_rng, DWORD flags)
             start_addr=sect_addr;
             srch_sz=sect_vsz;
 
-            if (b_logs) info_dbgprintf("Inspecting section %d starting "
-                "at: 0x%p, size: 0x%08X\n", sect_i+1, start_addr, srch_sz);
+            if (b_logs) {
+                info_dbgprintf("Inspecting section %d starting "
+                    "at: 0x%p, size: 0x%08X\n", sect_i+1, start_addr, srch_sz);
+            }
         } else
         {
             start_addr = (p_rng->rng.is_rva ?

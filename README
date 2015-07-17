@@ -134,7 +134,7 @@ Compilation:
 Loading and some simple examples
 --------------------------------
 
-I. Loading: in WinDbg command window put:
+I. Loading:
 
 0:000> .load dumpext
 
