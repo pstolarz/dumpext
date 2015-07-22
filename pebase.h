@@ -120,7 +120,7 @@ DWORD read_sectab(const image_nt_headers_t *p_nt_hdrs, ULONG64 sectab_addr,
 BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,
     IMAGE_DATA_DIRECTORY **pp_dir_entry, BOOL b_logs);
 
-/* The func returns some info about the 'rva' address basing on the section table
+/* The func returns some info about 'rva' address basing on the section table
    pointed by 'p_sectab' and 'n_sects' number of sections. The following info is
    returned:
    - number of rva's owning section index (0 based): 'p_sect_i'. Always set if
@@ -131,12 +131,12 @@ BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,
      'p_n_va_rem'. Always set to a positive value if the func returns TRUE.
    - raw pointer (file pointer) of the RVA: 'p_rptr'. May be zero if the rva is
      behind the section's raw data.
-    Return TRUE if an owning section's of the 'rva' has been found, FALSE otherwise.
+    Returns TRUE if an owning section's of 'rva' has been found, FALSE otherwise.
  */
 BOOL get_rva_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects, DWORD rva,
     DWORD *p_sect_i, DWORD *p_n_raw_rem, DWORD *p_n_va_rem, DWORD *p_rptr);
 
-/* The func returns some info about the 'rptr' pointer to raw data basing on the
+/* The func returns some info about 'rptr' pointer to raw data basing on the
    section table pointed by 'p_sectab' and 'n_sects' number of sections. The
    following info is returned:
    - number of rptr's owning section index (0 based): 'p_sect_i'. Always set if
@@ -146,7 +146,7 @@ BOOL get_rva_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects, DWORD rva
      TRUE.
    - corresponding rva address: 'p_rva'. May be set to zero if that part of file
      is not loaded to memory.
-   Return TRUE if an owning section's of the 'rva' has been found. FALSE otherwise.
+   Returns TRUE if an owning section's of 'rva' has been found. FALSE otherwise.
  */
 BOOL get_rptr_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects,
     DWORD rptr, DWORD *p_sect_i, DWORD *p_n_raw_rem, DWORD *p_rva);

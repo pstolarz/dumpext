@@ -110,9 +110,9 @@ static const str_num_t setvals_ht[] =
 {
     {"no", set_no},
     {"as_original", set_as_original},
-    {"always", set_always}
+    {"always", set_always},
+    {NULL}
 };
-const size_t NUM_SETVALS = sizeof(setvals_ht)/sizeof(setvals_ht[0]);
 const str_num_t *SETVALS_HT = &setvals_ht[0];
 
 /* "rsrc recovery" values hash tab */
@@ -121,8 +121,8 @@ static const str_num_t rsrcrvvals_ht[] =
     {"no", rsrcrv_no},
     {"yes", rsrcrv_yes},
     {"detect", rsrcrv_detect},
+    {NULL}
 };
-const size_t NUM_RSRCRVVALS = sizeof(rsrcrvvals_ht)/sizeof(rsrcrvvals_ht[0]);
 const str_num_t *RSRCRVVALS_HT = &rsrcrvvals_ht[0];
 
 /* "rsrc padding" values hash tab */
@@ -132,8 +132,8 @@ static const str_num_t paddvals_ht[] =
     {"word", padd_w},
     {"dword", padd_dw},
     {"auto", padd_auto},
+    {NULL}
 };
-const size_t NUM_PADDVALS = sizeof(paddvals_ht)/sizeof(paddvals_ht[0]);
 const str_num_t *PADDVALS_HT = &paddvals_ht[0];
 
 /* "section characteristics" values hash tab */
@@ -163,9 +163,9 @@ static const str_num_t secchrvals_ht[] =
     {"shared", IMAGE_SCN_MEM_SHARED},
     {"exec", IMAGE_SCN_MEM_EXECUTE},
     {"read", IMAGE_SCN_MEM_READ},
-    {"write", IMAGE_SCN_MEM_WRITE}
+    {"write", IMAGE_SCN_MEM_WRITE},
+    {NULL}
 };
-const size_t NUM_SECCHRVALS = sizeof(secchrvals_ht)/sizeof(secchrvals_ht[0]);
 const str_num_t *SECCHRVALS_HT = &secchrvals_ht[0];
 
 /* "file header characteristics" values hash tab */
@@ -185,9 +185,9 @@ static const str_num_t flchrvals_ht[] =
     {"system", IMAGE_FILE_SYSTEM},
     {"dll", IMAGE_FILE_DLL},
     {"uniproc", IMAGE_FILE_UP_SYSTEM_ONLY},
-    {"big_end", IMAGE_FILE_BYTES_REVERSED_HI}
+    {"big_end", IMAGE_FILE_BYTES_REVERSED_HI},
+    {NULL}
 };
-const size_t NUM_FLCHRVALS = sizeof(flchrvals_ht)/sizeof(flchrvals_ht[0]);
 const str_num_t *FLCHRVALS_HT = &flchrvals_ht[0];
 
 /* "dll characteristics" values hash tab */
@@ -200,9 +200,9 @@ static const str_num_t dllchrvals_ht[] =
     {"no_seh", IMAGE_DLLCHARACTERISTICS_NO_SEH},
     {"no_bind", IMAGE_DLLCHARACTERISTICS_NO_BIND},
     {"wdm", IMAGE_DLLCHARACTERISTICS_WDM_DRIVER},
-    {"term_aware", IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE}
+    {"term_aware", IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE},
+    {NULL}
 };
-const size_t NUM_DLLCHRVALS = sizeof(dllchrvals_ht)/sizeof(dllchrvals_ht[0]);
 const str_num_t *DLLCHRVALS_HT = &dllchrvals_ht[0];
 
 /* "memory info" values hash tab */
@@ -238,40 +238,38 @@ static const str_num_t meminfovals_ht[] =
     {"SEC_RESERVE", SEC_RESERVE},
     {"SEC_COMMIT", SEC_COMMIT},
     {"SEC_NOCACHE", SEC_NOCACHE},
-    {"SEC_WRITECOMBINE", SEC_WRITECOMBINE}
+    {"SEC_WRITECOMBINE", SEC_WRITECOMBINE},
+    {NULL}
 };
-const size_t NUM_MEMINFOVALS = sizeof(meminfovals_ht)/sizeof(meminfovals_ht[0]);
 const str_num_t *MEMINFOVALS_HT = &meminfovals_ht[0];
 
 
 /* exported; see header for details */
-DWORD get_ht_num(
-    const str_num_t *ht, size_t ht_sz, const char *str, DWORD def_val)
+DWORD get_ht_num(const str_num_t *ht, const char *str, DWORD def_val)
 {
     DWORD ret = def_val;
 
     if (str) {
-        for (size_t i=0; i<ht_sz; i++) {
-            if (!strcmpi(ht[i].str, str)) { ret = ht[i].num; break; }
+        for (; ht->str; ht++) {
+            if (!strcmpi(ht->str, str)) { ret = ht->num; break; }
         }
     }
     return ret;
 }
 
 /* exported; see header for details */
-const char *get_ht_str(
-    const str_num_t *ht, size_t ht_sz, DWORD num, const char *def_val)
+const char *get_ht_str(const str_num_t *ht, DWORD num, const char *def_val)
 {
     const char *ret = def_val;
 
-    for (size_t i=0; i<ht_sz; i++) {
-        if (ht[i].num == num) { ret = ht[i].str; break; }
+    for (; ht->str; ht++) {
+        if (ht->num == num) { ret = ht->str; break; }
     }
     return ret;
 }
 
 /* exported; see header for details */
-void print_flags(const str_num_t *ht, size_t ht_sz, DWORD flags, UINT bits)
+void print_flags(const str_num_t *ht, DWORD flags, UINT bits)
 {
     if (flags) {
         char sep=' ';
@@ -279,7 +277,7 @@ void print_flags(const str_num_t *ht, size_t ht_sz, DWORD flags, UINT bits)
         dbgprintf("   ;");
         for (DWORD bt=1, i=0; i<bits; bt=bt<<1, i++) {
             if (flags & bt) {
-                const char *flg_str = get_ht_str(ht, ht_sz, bt, NULL);
+                const char *flg_str = get_ht_str(ht, bt, NULL);
                 if (flg_str) { dbgprintf("%c%s", sep, flg_str); sep='|'; }
             }
         }
@@ -288,7 +286,7 @@ void print_flags(const str_num_t *ht, size_t ht_sz, DWORD flags, UINT bits)
 }
 
 /* exported; see header for details */
-DWORD parse_flags(const str_num_t *ht, size_t ht_sz, char *pc_flags)
+DWORD parse_flags(const str_num_t *ht, char *pc_flags)
 {
     DWORD flags=0;
 
@@ -303,7 +301,7 @@ DWORD parse_flags(const str_num_t *ht, size_t ht_sz, char *pc_flags)
         for (pc_end--; pc_flags<pc_end && isspace(*pc_end); pc_end--);
         *(++pc_end)=0;
 
-        DWORD flag=get_ht_num(ht, ht_sz, pc_flags, 0);
+        DWORD flag=get_ht_num(ht, pc_flags, 0);
         if (!flag) flag=strtoul(pc_flags, NULL, 0);
 
         flags|=flag;

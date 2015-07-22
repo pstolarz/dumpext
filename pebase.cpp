@@ -80,11 +80,13 @@ static struct
     DWORD chrt;             /* typical characteristics */
 } sects_pattrn[] =
 {
-    {".edata",
+    {
+        ".edata",
         SCONT_EXPORT,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
-    {".idata",
+    {
+        ".idata",
         SCONT_IMPORT,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
@@ -92,40 +94,48 @@ static struct
         SCONT_RSRC,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
-    {".tls",
+    {
+        ".tls",
         SCONT_TLS_DTA,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ|IMAGE_SCN_MEM_WRITE
     },
-    {".reloc",
+    {
+        ".reloc",
         SCONT_RELOC,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ|IMAGE_SCN_MEM_DISCARDABLE
     },
-    {".debug",
+    {
+        ".debug",
         SCONT_DEBUG_DTA|SCONT_COFF_SYMTAB|SCONT_COFF_RELOC|SCONT_COFF_LINE_NUM,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ|IMAGE_SCN_MEM_DISCARDABLE
     },
-    {".didat",
+    {
+        ".didat",
         SCONT_DELAY_IMPORT,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
-    {".pdata",
+    {
+        ".pdata",
         SCONT_EXCEPTION,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
-    {".rdata",
+    {
+        ".rdata",
         SCONT_EXPORT|SCONT_IMPORT|SCONT_EXCEPTION|SCONT_SECURITY|SCONT_RELOC|
             SCONT_DEBUG|SCONT_DEBUG_DTA|SCONT_ARCH|SCONT_TLS|SCONT_LOAD_CFG|
             SCONT_BND_IMPORT|SCONT_DELAY_IMPORT|SCONT_COM_DESC|SCONT_DATA|
             SCONT_COFF_SYMTAB|SCONT_COFF_RELOC|SCONT_COFF_LINE_NUM,
         IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ
     },
-    {".text",
+    {
+        ".text",
         SCONT_EXPORT|SCONT_IMPORT|SCONT_EXCEPTION|SCONT_SECURITY|SCONT_RELOC|
             SCONT_DEBUG|SCONT_DEBUG_DTA|SCONT_ARCH|SCONT_TLS|SCONT_LOAD_CFG|
             SCONT_BND_IMPORT|SCONT_DELAY_IMPORT|SCONT_COM_DESC|SCONT_CODE|
             SCONT_DATA|SCONT_COFF_SYMTAB|SCONT_COFF_RELOC|SCONT_COFF_LINE_NUM,
         IMAGE_SCN_CNT_CODE|IMAGE_SCN_MEM_EXECUTE|IMAGE_SCN_MEM_READ
-    }
+    },
+    {NULL}  /* end marker */
 };
 
 /* exported; see header for details */
@@ -152,7 +162,8 @@ BOOL read_pe_headers(ULONG64 mod_base, IMAGE_DOS_HEADER *p_dos_hdr,
     hdrs_off = get_32uint_le(&p_dos_hdr->e_lfanew);
     ULONG64 nt_hdrs_addr = mod_base + hdrs_off;
 
-    if (!(read_memory(nt_hdrs_addr, &(p_nt_hdrs->hdr), sizeof(p_nt_hdrs->hdr), &cb)
+    if (!(read_memory(
+            nt_hdrs_addr, &(p_nt_hdrs->hdr), sizeof(p_nt_hdrs->hdr), &cb)
         && cb==sizeof(p_nt_hdrs->hdr))) goto finish;
 
     if (get_Signature(p_nt_hdrs) != IMAGE_NT_SIGNATURE)
@@ -351,11 +362,11 @@ typedef enum _ownfo_tpy_t
 } ownfo_tpy_t;
 
 /* Get info string (written under 'pc_sect_info' buffer at least 100 bytes long)
-   informing about owning section or header of the 'ptr' pointer (type of the
-   pointer indicated by 'ptrtpy'). 'p_sectab' & 'n_sects' describes sections
-   table. If 'p_info_tpy' is not NULL type of returned information is written.
-   If sz>0 then additionally check inclusion in the owning section/header of a
-   block 'sz' long (starting from 'ptr').
+   informing about owning section or header of 'ptr' pointer (type of the pointer
+   indicated by 'ptrtpy'). 'p_sectab' & 'n_sects' describes sections table. If
+   'p_info_tpy' is not NULL type of returned information is written. If sz>0 then
+   additionally check inclusion in the owning section/header of a block 'sz' long
+   (starting from 'ptr').
  */
 static void get_owner_info(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
     char *pc_sect_info, const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects,
@@ -418,9 +429,12 @@ static void print_hdr_dos(const IMAGE_DOS_HEADER *p_dos_hdr)
     dbgprintf("e_cblp = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_cblp));
     dbgprintf("e_cp = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_cp));
     dbgprintf("e_crlc = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_crlc));
-    dbgprintf("e_cparhdr = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_cparhdr));
-    dbgprintf("e_minalloc = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_minalloc));
-    dbgprintf("e_maxalloc = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_maxalloc));
+    dbgprintf("e_cparhdr = 0x%04X\n",
+        (UINT)get_16uint_le(&p_dos_hdr->e_cparhdr));
+    dbgprintf("e_minalloc = 0x%04X\n",
+        (UINT)get_16uint_le(&p_dos_hdr->e_minalloc));
+    dbgprintf("e_maxalloc = 0x%04X\n",
+        (UINT)get_16uint_le(&p_dos_hdr->e_maxalloc));
     dbgprintf("e_ss = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_ss));
     dbgprintf("e_sp = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_sp));
     dbgprintf("e_csum = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_csum));
@@ -429,7 +443,8 @@ static void print_hdr_dos(const IMAGE_DOS_HEADER *p_dos_hdr)
     dbgprintf("e_lfarlc = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_lfarlc));
     dbgprintf("e_ovno = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_ovno));
     dbgprintf("e_oemid = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_oemid));
-    dbgprintf("e_oeminfo = 0x%04X\n", (UINT)get_16uint_le(&p_dos_hdr->e_oeminfo));
+    dbgprintf("e_oeminfo = 0x%04X\n",
+        (UINT)get_16uint_le(&p_dos_hdr->e_oeminfo));
     dbgprintf("e_lfanew = 0x%08X\n\n", get_32uint_le(&p_dos_hdr->e_lfanew));
 }
 
@@ -437,18 +452,38 @@ static void print_hdr_dos(const IMAGE_DOS_HEADER *p_dos_hdr)
 static void print_hdr_file(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
     const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects)
 {
-    const static str_num_t machine_ht[] =
-    {
-        {"unknown",0}, {"x86",0x014c}, {"mips r3000 BE",0x160},
-        {"mips r3000 LE",0x162}, {"mips r4000 LE",0x0166},
-        {"mips r10000 LE",0x0168}, {"mips wce v2 LE",0x0169}, {"alpha",0x0184},
-        {"sh3 LE",0x01a2}, {"sh3 dsp",0x01a3}, {"sh3e LE",0x01a4},
-        {"sh4 LE",0x01a6}, {"sh5",0x01a8}, {"arm LE",0x01c0}, {"thumb",0x01c2},
-        {"arm v7",0x01c4}, {"am33",0x01d3}, {"ppc LE",0x01f0}, {"ppc fpu",0x01f1},
-        {"ia64",0x0200}, {"mips 16",0x0266}, {"alpha64",0x0284},
-        {"mips fpu",0x0366}, {"mips fpu 16",0x0466}, {"infineon",0x0520},
-        {"cef",0x0CEF}, {"efi",0x0EBC}, {"x64",0x8664}, {"m32r LE",0x9041},
-        {"cee",0xC0EE}
+    const static str_num_t machine_ht[] = {
+        {"unknown", 0},
+        {"x86", 0x014c},
+        {"mips r3000 BE", 0x160},
+        {"mips r3000 LE", 0x162},
+        {"mips r4000 LE", 0x0166},
+        {"mips r10000 LE", 0x0168},
+        {"mips wce v2 LE", 0x0169},
+        {"alpha", 0x0184},
+        {"sh3 LE", 0x01a2},
+        {"sh3 dsp", 0x01a3},
+        {"sh3e LE", 0x01a4},
+        {"sh4 LE", 0x01a6},
+        {"sh5", 0x01a8},
+        {"arm LE", 0x01c0},
+        {"thumb", 0x01c2},
+        {"arm v7", 0x01c4},
+        {"am33", 0x01d3},
+        {"ppc LE", 0x01f0},
+        {"ppc fpu", 0x01f1},
+        {"ia64", 0x0200},
+        {"mips 16", 0x0266},
+        {"alpha64", 0x0284},
+        {"mips fpu", 0x0366},
+        {"mips fpu 16", 0x0466},
+        {"infineon", 0x0520},
+        {"cef", 0x0CEF},
+        {"efi", 0x0EBC},
+        {"x64", 0x8664},
+        {"m32r LE", 0x9041},
+        {"cee", 0xC0EE},
+        {NULL}
     };
 
     const IMAGE_FILE_HEADER *p_fh = &get_FileHeader(p_nt_hdrs);
@@ -460,8 +495,7 @@ static void print_hdr_file(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs
     dbgprintf("[file_header]\n");
     dbgprintf("Machine = 0x%04X   ; %s\n",
         (UINT)(machine=get_16uint_le(&p_fh->Machine)),
-        get_ht_str(machine_ht,
-            sizeof(machine_ht)/sizeof(machine_ht[0]), (DWORD)machine, "???"));
+        get_ht_str(machine_ht, (DWORD)machine, "???"));
     dbgprintf("NumberOfSections = 0x%04X\n",
         (UINT)get_16uint_le(&p_fh->NumberOfSections));
     dbgprintf("TimeDateStamp = 0x%08X\n", get_32uint_le(&p_fh->TimeDateStamp));
@@ -479,7 +513,7 @@ static void print_hdr_file(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs
 
     dbgprintf("Characteristics = 0x%04X",
         (UINT)(chrt = get_16uint_le(&p_fh->Characteristics)));
-    print_flags(FLCHRVALS_HT, NUM_FLCHRVALS, (DWORD)chrt, 16);
+    print_flags(FLCHRVALS_HT, (DWORD)chrt, 16);
 
     dbgprintf("\n");
 }
@@ -488,12 +522,22 @@ static void print_hdr_file(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs
 static void print_hdr_opt(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
     const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects)
 {
-    const static str_num_t subsys_ht[] =
-    {
-        {"unknown",0}, {"native",1}, {"win gui",2}, {"win cui",3}, {"os2 cui",5},
-        {"posix cui",7}, {"win native",8}, {"win ce gui",9}, {"efi app",10},
-        {"efi boot service driver",11}, {"efi runtime driver",12}, {"efi rom",13},
-        {"xbox",14}, {"win boot app",16}
+    const static str_num_t subsys_ht[] = {
+        {"unknown", 0},
+        {"native", 1},
+        {"win gui", 2},
+        {"win cui", 3},
+        {"os2 cui", 5},
+        {"posix cui", 7},
+        {"win native", 8},
+        {"win ce gui", 9},
+        {"efi app", 10},
+        {"efi boot service driver", 11},
+        {"efi runtime driver", 12},
+        {"efi rom", 13},
+        {"xbox", 14},
+        {"win boot app", 16},
+        {NULL}
     };
 
     DWORD rva;
@@ -578,13 +622,12 @@ static void print_hdr_opt(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
         dbgprintf("Subsystem = 0x%04X   ; %s\n",
             (UINT)(subsys=get_16uint_le(
                 &p_nt_hdrs->hdr.pe32.OptionalHeader.Subsystem)),
-            get_ht_str(subsys_ht,
-                sizeof(subsys_ht)/sizeof(subsys_ht[0]), (DWORD)subsys, "???"));
+            get_ht_str(subsys_ht, (DWORD)subsys, "???"));
 
         dbgprintf("DllCharacteristics = 0x%04X",
             (UINT)(chrt=get_16uint_le(
                 &p_nt_hdrs->hdr.pe32.OptionalHeader.DllCharacteristics)));
-        print_flags(DLLCHRVALS_HT, NUM_DLLCHRVALS, (DWORD)chrt, 16);
+        print_flags(DLLCHRVALS_HT, (DWORD)chrt, 16);
 
         dbgprintf("SizeOfStackReserve = 0x%08X\n",
             get_32uint_le(&p_nt_hdrs->hdr.pe32.OptionalHeader.SizeOfStackReserve));
@@ -634,16 +677,14 @@ static void print_hdr_opt(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
 
         dbgprintf("ImageBase = 0x%016I64X\n",
             get_64uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.ImageBase));
-        dbgprintf("SectionAlignment = 0x%08X\n",
-            get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SectionAlignment));
+        dbgprintf("SectionAlignment = 0x%08X\n", get_32uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.SectionAlignment));
         dbgprintf("FileAlignment = 0x%08X\n",
             get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.FileAlignment));
-        dbgprintf("MajorOperatingSystemVersion = 0x%04X\n",
-            (UINT)get_16uint_le(
-                &p_nt_hdrs->hdr.pe64.OptionalHeader.MajorOperatingSystemVersion));
-        dbgprintf("MinorOperatingSystemVersion = 0x%04X\n",
-            (UINT)get_16uint_le(
-                &p_nt_hdrs->hdr.pe64.OptionalHeader.MinorOperatingSystemVersion));
+        dbgprintf("MajorOperatingSystemVersion = 0x%04X\n", (UINT)get_16uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.MajorOperatingSystemVersion));
+        dbgprintf("MinorOperatingSystemVersion = 0x%04X\n", (UINT)get_16uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.MinorOperatingSystemVersion));
         dbgprintf("MajorImageVersion = 0x%04X\n",
             (UINT)get_16uint_le(
                 &p_nt_hdrs->hdr.pe64.OptionalHeader.MajorImageVersion));
@@ -656,8 +697,8 @@ static void print_hdr_opt(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
         dbgprintf("MinorSubsystemVersion = 0x%04X\n",
             (UINT)get_16uint_le(
                 &p_nt_hdrs->hdr.pe64.OptionalHeader.MinorSubsystemVersion));
-        dbgprintf("Win32VersionValue = 0x%08X\n",
-            get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.Win32VersionValue));
+        dbgprintf("Win32VersionValue = 0x%08X\n", get_32uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.Win32VersionValue));
         dbgprintf("SizeOfImage = 0x%08X\n",
             get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfImage));
         dbgprintf("SizeOfHeaders = 0x%08X\n",
@@ -667,26 +708,25 @@ static void print_hdr_opt(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
         dbgprintf("Subsystem = 0x%04X   ; %s\n",
             (UINT)(subsys=get_16uint_le(
                 &p_nt_hdrs->hdr.pe64.OptionalHeader.Subsystem)),
-            get_ht_str(subsys_ht,
-                sizeof(subsys_ht)/sizeof(subsys_ht[0]), (DWORD)subsys, "???"));
+            get_ht_str(subsys_ht, (DWORD)subsys, "???"));
 
         dbgprintf("DllCharacteristics = 0x%04X",
             (UINT)(chrt=get_16uint_le(
                 &p_nt_hdrs->hdr.pe64.OptionalHeader.DllCharacteristics)));
-        print_flags(DLLCHRVALS_HT, NUM_DLLCHRVALS, (DWORD)chrt, 16);
+        print_flags(DLLCHRVALS_HT, (DWORD)chrt, 16);
 
-        dbgprintf("SizeOfStackReserve = 0x%016I64X\n",
-            get_64uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfStackReserve));
-        dbgprintf("SizeOfStackCommit = 0x%016I64X\n",
-            get_64uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfStackCommit));
-        dbgprintf("SizeOfHeapReserve = 0x%016I64X\n",
-            get_64uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfHeapReserve));
-        dbgprintf("SizeOfHeapCommit = 0x%016I64X\n",
-            get_64uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfHeapCommit));
+        dbgprintf("SizeOfStackReserve = 0x%016I64X\n", get_64uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfStackReserve));
+        dbgprintf("SizeOfStackCommit = 0x%016I64X\n", get_64uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfStackCommit));
+        dbgprintf("SizeOfHeapReserve = 0x%016I64X\n", get_64uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfHeapReserve));
+        dbgprintf("SizeOfHeapCommit = 0x%016I64X\n", get_64uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.SizeOfHeapCommit));
         dbgprintf("LoaderFlags = 0x%08X\n",
             get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.LoaderFlags));
-        dbgprintf("NumberOfRvaAndSizes = 0x%08X\n\n",
-            get_32uint_le(&p_nt_hdrs->hdr.pe64.OptionalHeader.NumberOfRvaAndSizes));
+        dbgprintf("NumberOfRvaAndSizes = 0x%08X\n\n", get_32uint_le(
+            &p_nt_hdrs->hdr.pe64.OptionalHeader.NumberOfRvaAndSizes));
     }
 }
 
@@ -826,7 +866,7 @@ static void print_sectab(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
 
         dbgprintf("%d.%s = 0x%08X", i+1, PROP_SECTS_CHARACTER,
             (chrt = get_32uint_le(&p_sectab[i].Characteristics)));
-        print_flags(SECCHRVALS_HT, NUM_SECCHRVALS, chrt, 32);
+        print_flags(SECCHRVALS_HT, chrt, 32);
     }
     dbgprintf("\n");
 }
@@ -1260,7 +1300,8 @@ void print_debug(ULONG64 mod_base, const rng_spec_t *p_rng)
     DWORD rva = get_32uint_le(&debug.AddressOfRawData);
     dbgprintf("Address of data: 0x%p[0x%08X]\n", RVA2ADDR(rva, mod_base), rva);
 
-    dbgprintf("Pointer to data: 0x%08X\n", get_32uint_le(&debug.PointerToRawData));
+    dbgprintf("Pointer to data: 0x%08X\n",
+        get_32uint_le(&debug.PointerToRawData));
 
 finish:
     return;
@@ -1270,10 +1311,17 @@ finish:
 void print_reloc(ULONG64 mod_base, const rng_spec_t *p_rng)
 {
     const static str_num_t reloc_tpy_ht[] = {
-        {"padding",0}, {"hign",1}, {"low",2}, {"high_low",3},
-        {"high_adj (with param on the next slot)",4},
-        {"mips_jmp OR arm_mov32a",5}, {"arm_movt",7},
-        {"ia64_imm64 OR mips_jmp16",9}, {"dir64",10}};
+        {"padding", 0},
+        {"hign", 1},
+        {"low", 2},
+        {"high_low", 3},
+        {"high_adj (with param on the next slot)", 4},
+        {"mips_jmp OR arm_mov32a", 5},
+        {"arm_movt", 7},
+        {"ia64_imm64 OR mips_jmp16", 9},
+        {"dir64", 10},
+        {NULL}
+    };
 
     prnt_dir_hndl_t hndl;
     if (!init_prnt_dir_hndl(
@@ -1336,11 +1384,9 @@ void print_reloc(ULONG64 mod_base, const rng_spec_t *p_rng)
                 {
                     UINT block_off = reloc_i&0xfff;
                     UINT reloc_tpy = (reloc_i>>12)&0x0f;
-                    dbgprintf("  Reloc at: 0x%p[0x%08X+0x%03X], type: 0x%X   ; %s\n",
-                        block_addr+block_off, block_rva, block_off, reloc_tpy,
-                        get_ht_str(reloc_tpy_ht,
-                            sizeof(reloc_tpy_ht)/sizeof(reloc_tpy_ht[0]),
-                            reloc_tpy, "???"));
+                    dbgprintf("  Reloc at: 0x%p[0x%08X+0x%03X], type: 0x%X   ; "
+                        "%s\n", block_addr+block_off, block_rva, block_off,
+                        reloc_tpy, get_ht_str(reloc_tpy_ht, reloc_tpy, "???"));
 
                     if (reloc_tpy==IMAGE_REL_BASED_HIGHADJ) n_prm_slot=1;
                 } else {
@@ -1388,7 +1434,8 @@ static BOOL init_dump_pe_hndl(
     p_hndl->mod_base = mod_base;
 
     if (b_open_outf) {
-        GetPrivateProfileString(PROP_SECT_DUMP, PROP_DUMP_OUTPUT, OUT_DUMP_DEF_FILE,
+        GetPrivateProfileString(
+            PROP_SECT_DUMP, PROP_DUMP_OUTPUT, OUT_DUMP_DEF_FILE,
             p_hndl->f_out_name, sizeof(p_hndl->f_out_name), PROP_FILE);
 
         if (!(p_hndl->f_out = fopen(p_hndl->f_out_name, "w+b"))) {
@@ -1417,7 +1464,7 @@ finish:
 
 /* Print warn message if the pointer 'ptr' points outside the sections table.
    Type of the pointer 'ptr' is either RVA or raw file pointer (as indicated by
-   the 'ptrtpy'). If sz>0 then additionally check inclusion in the owning
+   'ptrtpy'). If sz>0 then additionally check inclusion in the owning
    section/header of a block 'sz' long (starting from 'ptr').
  */
 static void check_ref(const dump_pe_hndl_t *p_hndl, DWORD ptr, pe_ptrtpy_t ptrtpy,
@@ -1440,9 +1487,9 @@ static void check_ref(const dump_pe_hndl_t *p_hndl, DWORD ptr, pe_ptrtpy_t ptrtp
 
 /* Check references to sections table and print warnings in case of detections
    of problems. 'what' is a bitmap specifying what type of checking shall be
-   performed (CHK_REF_XXX or-ed flags). If PE directories have been chosen to check,
-   'not_dirs' as a bitmap, specifies what dirs NOT to check (1st dir at bit 0,
-   2nd at bit 1 and so on).
+   performed (CHK_REF_XXX or-ed flags). If PE directories have been chosen to
+   check, 'not_dirs' as a bitmap, specifies what dirs NOT to check (1st dir at
+   bit 0, 2nd at bit 1 and so on).
  */
 static void check_refs(const dump_pe_hndl_t *p_hndl, UINT what, UINT32 not_dirs)
 {
@@ -1451,8 +1498,8 @@ static void check_refs(const dump_pe_hndl_t *p_hndl, UINT what, UINT32 not_dirs)
     /* check headers */
     if (what & CHKREF_HEADERS)
     {
-        /* no need to check references by raw pointers of
-           PointerToSymbolTable since it may points to region outside PE sections */
+        /* no need to check references by raw pointers of PointerToSymbolTable
+           since it may points to region outside PE sections */
 
         rva = (p_hndl->nt_hdrs.pe_tpy==pe_32bit ?
             get_32uint_le(
@@ -1482,9 +1529,9 @@ static void check_refs(const dump_pe_hndl_t *p_hndl, UINT what, UINT32 not_dirs)
         }
     }
 
-    /* no need to check references by sections raw pointers of PointerToRelocations
-       and PointerToLinenumbers since they may points to regions outside PE
-       sections */
+    /* no need to check references by sections raw pointers of
+       PointerToRelocations and PointerToLinenumbers since they may points to
+       regions outside PE sections */
 
     /* check references to RVA fields in the PE directories */
     if (what & CHKREF_DIRS)
@@ -1645,8 +1692,8 @@ static void read_headers_cfg(dump_pe_hndl_t *p_hndl)
         {
             set_32uint_le(
                 &p_hndl->nt_hdrs.hdr.pe32.OptionalHeader.BaseOfData, base_data);
-            info_dbgprintf(
-                "%s/%s = 0x%08X\n", PROP_SECT_OPTH, PROP_OPTH_BASE_DATA, base_data);
+            info_dbgprintf("%s/%s = 0x%08X\n",
+                PROP_SECT_OPTH, PROP_OPTH_BASE_DATA, base_data);
         }
     }
 
@@ -1722,7 +1769,7 @@ static void read_dirs_cfg(dump_pe_hndl_t *p_hndl)
                         set_32uint_le(&p_dd->Size, 0);
                     } else
                     if (i==IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT) {
-                        /* clear bound imports (it will be rebuild later on) */
+                        /* clear bound imports (it will be rebuilt later on) */
                         set_32uint_le(&p_dd->VirtualAddress, 0);
                         set_32uint_le(&p_dd->Size, 0);
                     }
@@ -1997,11 +2044,11 @@ static BOOL update_sect(
     if (GetPrivateProfileString(
         PROP_SECT_SECTS, prm_name, "", prm_val, sizeof(prm_val), PROP_FILE)>0)
     {
-        DWORD chrt = parse_flags(SECCHRVALS_HT, NUM_SECCHRVALS, prm_val);
+        DWORD chrt = parse_flags(SECCHRVALS_HT, prm_val);
         set_32uint_le(&p_hndl->sectab[sect_i].Characteristics, chrt);
 
         info_dbgprintf("%s/%s = 0x%08X", PROP_SECT_SECTS, prm_name, chrt);
-        print_flags(SECCHRVALS_HT, NUM_SECCHRVALS, chrt, 32);
+        print_flags(SECCHRVALS_HT, chrt, 32);
     }
 
     if (!read_sect_dmpcfg(p_hndl, sect_i)) goto finish;
@@ -2050,7 +2097,8 @@ static BOOL update_sect(
         DWORD prev_rsz = get_32uint_le(&p_hndl->sectab[sect_i].SizeOfRawData);
 
         if (!prev_rsz) {
-            /* inserting a raw file section which is currently absent in the file */
+            /* inserting a raw file section which is currently absent in
+               the file */
             upd_rptr = get_ins_sect_rptr(p_hndl, sect_i);
         } else {
             upd_rptr = get_32uint_le(
@@ -2195,10 +2243,11 @@ static BOOL read_sects_cfg(dump_pe_hndl_t *p_hndl)
                 PROP_SECTS_VSZ,
                 PROP_SECTS_RVA,
                 PROP_SECTS_RSZ,
-                PROP_SECTS_DMPCONT};
+                PROP_SECTS_DMPCONT,
+                NULL
+            };
 
-            for (DWORD j=0;
-                j<sizeof(sects_prms_names)/sizeof(sects_prms_names[0]); j++)
+            for (UINT j=0; sects_prms_names[j]; j++)
             {
                 sprintf(prm_name, "%d.%s", i+1, sects_prms_names[j]);
                 if (GetPrivateProfileString(PROP_SECT_SECTS,
@@ -2474,23 +2523,25 @@ static BOOL dump_sections_to_file(const dump_pe_hndl_t *p_hndl)
                     p_hndl->f_out, RVA2ADDR(rva, p_hndl->mod_base), dump_sz);
                 if (rc!=cpy_ok)
                 {
-                    if (get_32uint_le(
-                        &p_hndl->sectab[i].Characteristics)&IMAGE_SCN_MEM_DISCARDABLE)
+                    if (get_32uint_le(&p_hndl->sectab[i].Characteristics) &
+                        IMAGE_SCN_MEM_DISCARDABLE)
                     {
                         /* if sect is not loaded to memory fill
                            its file space with zeros */
                         dump_sz = 0;
-                        if (b_ferr=fseek(p_hndl->f_out, rptr, SEEK_SET)) goto finish;
+                        if (b_ferr=fseek(p_hndl->f_out, rptr, SEEK_SET))
+                            goto finish;
 
                         warn_dbgprintf(
                             "Memory access error during dumping discardable "
                             "section %d; filled with zeros\n", i+1);
                     } else {
-                        if (rc==cpy_dst_err)
+                        if (rc==cpy_dst_err) {
                             b_ferr=TRUE;
-                        else
-                            err_dbgprintf(
-                                "Memory access error during section %d dump\n", i+1);
+                        } else {
+                            err_dbgprintf("Memory access error during section "
+                                "%d dump\n", i+1);
+                        }
                         goto finish;
                     }
                 }
@@ -2500,17 +2551,20 @@ static BOOL dump_sections_to_file(const dump_pe_hndl_t *p_hndl)
         case secdmp_file:
             if (dump_sz=min(p_hndl->sect_dmpcfg[i].dmpfile.fsz, rsz))
             {
-                if (fseek(p_hndl->sect_dmpcfg[i].dmpfile.fh, 0, SEEK_SET))
+                if (fseek(p_hndl->sect_dmpcfg[i].dmpfile.fh, 0, SEEK_SET)) {
                     rc=cpy_src_err;
-                else
-                    rc=file2file(
-                        p_hndl->f_out, p_hndl->sect_dmpcfg[i].dmpfile.fh, dump_sz);
+                } else {
+                    rc=file2file(p_hndl->f_out,
+                        p_hndl->sect_dmpcfg[i].dmpfile.fh, dump_sz);
+                }
 
                 if (rc!=cpy_ok) {
-                    if (rc==cpy_dst_err)
+                    if (rc==cpy_dst_err) {
                         b_ferr=TRUE;
-                    else
-                        err_dbgprintf("Section %d content file access error\n", i+1);
+                    } else {
+                        err_dbgprintf("Section %d content file access error\n",
+                            i+1);
+                    }
                     goto finish;
                 }
             }
@@ -2559,8 +2613,8 @@ err:
 }
 
 /* Calculates PE checksum and writes it under 'p_csum'. 'f' is a handle of file
-   to calculate, 'org_csum' - original checksum of PE file. The func returns TRUE
-   on success.
+   to calculate, 'org_csum' - original checksum of PE file. The func returns
+   TRUE on success.
  */
 static BOOL calc_pe_csum(FILE *f, DWORD org_csum, DWORD *p_csum)
 {
@@ -2764,8 +2818,8 @@ BOOL pe_dump(ULONG64 mod_base, DWORD dmp_sect)
     if (!patch_imports(&hndl)) goto finish;
 
     /* after the patch check IAT & IDT dirs */
-    check_refs(&hndl, CHKREF_DIRS,
-        (UINT32)~((1<<IMAGE_DIRECTORY_ENTRY_IMPORT)|(1<<IMAGE_DIRECTORY_ENTRY_IAT)));
+    check_refs(&hndl, CHKREF_DIRS, (UINT32)~((1<<IMAGE_DIRECTORY_ENTRY_IMPORT)
+        | (1<<IMAGE_DIRECTORY_ENTRY_IAT)));
 
     if (!fix_iat(&hndl)) {
         warn_dbgprintf("IAT table fixing finished with error; "
@@ -2781,8 +2835,8 @@ BOOL pe_dump(ULONG64 mod_base, DWORD dmp_sect)
     if (GetPrivateProfileString(PROP_SECT_DUMP, PROP_DUMP_SET_CRC,
         "", prm_val, sizeof(prm_val), PROP_FILE)<=0) *prm_val=0;
 
-    sv = (set_val_t)get_ht_num(SETVALS_HT, NUM_SETVALS,
-        (*prm_val ? prm_val : NULL), set_as_original);
+    sv = (set_val_t)get_ht_num(
+        SETVALS_HT, (*prm_val ? prm_val : NULL), set_as_original);
 
     if (sv==set_always || (sv==set_as_original && org_csum))
         update_pe_csum(&hndl);
@@ -2791,8 +2845,8 @@ BOOL pe_dump(ULONG64 mod_base, DWORD dmp_sect)
     if (GetPrivateProfileString(PROP_SECT_DUMP, PROP_DUMP_BIND_IMPORTS,
         "", prm_val, sizeof(prm_val), PROP_FILE)<=0) *prm_val=0;
 
-    sv = (set_val_t)get_ht_num(SETVALS_HT, NUM_SETVALS,
-        (*prm_val ? prm_val : NULL), set_as_original);
+    sv = (set_val_t)get_ht_num(
+        SETVALS_HT, (*prm_val ? prm_val : NULL), set_as_original);
 
     if (sv==set_always || (sv==set_as_original && b_bound_imps))
     {
@@ -3043,7 +3097,8 @@ void suggest_sects_chrt_name(ULONG64 mod_base, DWORD flags)
                     IMAGE_SCN_MEM_WRITE;
             } else {
                 if (!sect_dta_n) {
-                    /* 1st sect of unspec. type is usually r/w initialized ".data" */
+                    /* 1st sect of unspec. type is usually
+                       read/write initialized ".data" */
                     pc_name = ".data";
                     chrt = IMAGE_SCN_CNT_INITIALIZED_DATA|IMAGE_SCN_MEM_READ|
                         IMAGE_SCN_MEM_WRITE;
@@ -3061,9 +3116,7 @@ void suggest_sects_chrt_name(ULONG64 mod_base, DWORD flags)
         {
             /* recognize type basing on its pattern */
             UINT j;
-            for (j=0;
-                 j<sizeof(sects_pattrn)/sizeof(sects_pattrn[0]);
-                 j++)
+            for (j=0; sects_pattrn[j].pc_name; j++)
             {
                 /* section content must be included in max content to match */
                 if ((sect_cont&sects_pattrn[j].cont)==sect_cont) {
@@ -3073,7 +3126,7 @@ void suggest_sects_chrt_name(ULONG64 mod_base, DWORD flags)
                 }
             }
 
-            if (j>=sizeof(sects_pattrn)/sizeof(sects_pattrn[0])) {
+            if (!sects_pattrn[j].pc_name) {
                 /* unrecognised sect - remain current spec. */
                 strncpy(name, (char*)&hndl.sectab[i].Name[0], sizeof(name)-1);
                 name[sizeof(name)-1] = 0;
@@ -3085,7 +3138,7 @@ void suggest_sects_chrt_name(ULONG64 mod_base, DWORD flags)
 
         dbgprintf("%d.%s = %s\n", i+1, PROP_SECTS_NAME, pc_name);
         dbgprintf("%d.%s = 0x%08X", i+1, PROP_SECTS_CHARACTER, chrt);
-        print_flags(SECCHRVALS_HT, NUM_SECCHRVALS, chrt, 32);
+        print_flags(SECCHRVALS_HT, chrt, 32);
     }
 
 finish:

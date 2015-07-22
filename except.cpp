@@ -224,7 +224,8 @@ static void print_x64_except(
         if (!(read_memory(p_hndl->dir_addr+off, &fun_ent, sizeof(fun_ent), &cb)
             && cb==sizeof(fun_ent))) break;
 
-        /* break on if some of required BeginAddress/UnwindData fields are absent */
+        /* break on if some of required BeginAddress/UnwindData fields
+           are absent */
         if (!fun_ent.BeginAddress || !fun_ent.UnwindData) break;
 
         UNWIND_INFO_X64 uwind;
@@ -244,15 +245,16 @@ static void print_x64_except(
 
         if (info_details<=PRNTEXCPT_INFO_NORMAL) continue;
 
-        if (!(read_memory(
-            uwind_addr, &uwind, sizeof(uwind), &cb) && cb==sizeof(uwind))) break;
+        if (!(read_memory(uwind_addr,
+            &uwind, sizeof(uwind), &cb) && cb==sizeof(uwind))) break;
 
         UINT flags = (uwind.Flags_Version>>3)&0x1f;
         UINT frame_reg = uwind.FrameOffset_FrameRegister&0x0f;
         UINT n_ucodes = uwind.CountOfCodes;
 
         dbgprintf(" Unwind info:\n");
-        dbgprintf("  Flags/Version:       0x%02X   ; flags:", uwind.Flags_Version);
+        dbgprintf("  Flags/Version:       0x%02X   ; flags:",
+            uwind.Flags_Version);
         print_x64_uwind_flags(flags);
         dbgprintf("(%d), ver:%d\n", flags, uwind.Flags_Version&0x07);
 
@@ -333,7 +335,8 @@ static void print_ia64_except(
         if (!(read_memory(p_hndl->dir_addr+off, &fun_ent, sizeof(fun_ent), &cb)
             && cb==sizeof(fun_ent))) break;
 
-        /* break on if some of required BeginAddress/UnwindData fields are absent */
+        /* break on if some of required BeginAddress/UnwindData fields
+           are absent */
         if (!fun_ent.BeginAddress || !fun_ent.UnwindData) break;
 
         dbgprintf("0x%p[0x%08X] Func. begin/end/unwind info addr: "

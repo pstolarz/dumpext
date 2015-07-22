@@ -125,7 +125,8 @@ static ULONG64 get_mod_base(PCSTR *p_args, ULONG64 addr, char *pc_img_name)
                 if (!read_pe_headers(mod_base, &dos_hdr, &nt_hdrs, NULL, FALSE))
                     continue;
 
-                WORD fchr=get_16uint_le(&get_FileHeader(&nt_hdrs).Characteristics);
+                WORD fchr =
+                    get_16uint_le(&get_FileHeader(&nt_hdrs).Characteristics);
                 if (fchr&IMAGE_FILE_EXECUTABLE_IMAGE && !(fchr&IMAGE_FILE_DLL))
                     break;
             }
@@ -143,7 +144,8 @@ static ULONG64 get_mod_base(PCSTR *p_args, ULONG64 addr, char *pc_img_name)
         *pc_img_name=0;
 
         if ((get_client()->QueryInterface(
-            __uuidof(IDebugSymbols2), (void **)&DebugSymbols2))!=S_OK) goto finish;
+            __uuidof(IDebugSymbols2), (void **)&DebugSymbols2))!=S_OK)
+                goto finish;
 
         if (DebugSymbols2->GetModuleNameString(DEBUG_MODNAME_IMAGE,
             DEBUG_ANY_ID, mod_base, pc_img_name, MAX_PATH+1, &img_name_sz)==S_OK
@@ -168,27 +170,24 @@ dump_imp_scan(PDEBUG_CLIENT4 Client, PCSTR args)
     set_client(Client);
 
     flag_desc_t flags_dsc_iat[] =
-        {{'w', FALSE}, {'s', TRUE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}};
+        {{'w', FALSE}, {'s', TRUE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}, {0}};
     flag_desc_t flags_dsc_idt[] =
-        {{'w', FALSE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}};
+        {{'w', FALSE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}, {0}};
 
     iscan_tpy_t scan_tpy;
     flag_desc_t *p_flags_dsc;
-    UINT n_flags;
 
     if (is_cmd(args, "iat", 2, &args)) {
         scan_tpy=iscan_iat;
         p_flags_dsc=flags_dsc_iat;
-        n_flags = sizeof(flags_dsc_iat)/sizeof(flags_dsc_iat[0]);
     } else
     if (is_cmd(args, "idt", 2, &args)) {
         scan_tpy=iscan_idt;
         p_flags_dsc=flags_dsc_idt;
-        n_flags = sizeof(flags_dsc_idt)/sizeof(flags_dsc_idt[0]);
     } else goto finish;
 
     rng_spec_t rng;
-    rngspc_rc_t rc = get_range_spec(&args, p_flags_dsc, n_flags, &rng);
+    rngspc_rc_t rc = get_range_spec(&args, p_flags_dsc, &rng);
     if (rc==rngspc_err) goto finish;
 
     DWORD flags=0;
@@ -219,11 +218,10 @@ dump_pe(PDEBUG_CLIENT4 Client, PCSTR args)
     HRESULT ret=E_FAIL;
     set_client(Client);
 
-    flag_desc_t flags_dsc[] = {{'s', TRUE}};
-    UINT n_flags = sizeof(flags_dsc)/sizeof(flags_dsc[0]);
+    flag_desc_t flags_dsc[] = {{'s', TRUE}, {0}};
 
     rng_spec_t rng;
-    rngspc_rc_t rc = get_range_spec(&args, flags_dsc, n_flags, &rng);
+    rngspc_rc_t rc = get_range_spec(&args, flags_dsc, &rng);
     if (rc==rngspc_err) goto finish;
 
     char img_name[MAX_PATH+1];
@@ -267,42 +265,37 @@ dump_pe_info(PDEBUG_CLIENT4 Client, PCSTR args)
         b_except)
     {
         flag_desc_t flags_dsc_rng[] =
-            {{'a', TRUE}, {'r', TRUE}};
+            {{'a', TRUE}, {'r', TRUE}, {0}};
         flag_desc_t flags_dsc_rng_l[] =
-            {{'a', TRUE}, {'r', TRUE}, {'l', TRUE}};
+            {{'a', TRUE}, {'r', TRUE}, {'l', TRUE}, {0}};
         flag_desc_t flags_dsc_imp[] =
-            {{'x', FALSE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}};
+            {{'x', FALSE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}, {0}};
         flag_desc_t flags_dsc_rsrc[] =
-            {{'c', FALSE}, {'C', FALSE}, {'a', TRUE}, {'r', TRUE}};
+            {{'c', FALSE}, {'C', FALSE}, {'a', TRUE}, {'r', TRUE}, {0}};
         flag_desc_t flags_dsc_except[] =
-            {{'v', FALSE}, {'V', FALSE}, {'a', TRUE}, {'r', TRUE}, {'l', TRUE}};
+            {{'v', FALSE}, {'V', FALSE}, {'a', TRUE}, {'r', TRUE},
+                {'l', TRUE}, {0}};
 
-        UINT n_flags;
         flag_desc_t *p_flags_dsc;
 
         if (b_import) {
             p_flags_dsc = flags_dsc_imp;
-            n_flags = sizeof(flags_dsc_imp)/sizeof(flags_dsc_imp[0]);
         } else
         if (b_bimport || b_dimport || b_reloc) {
             p_flags_dsc = flags_dsc_rng_l;
-            n_flags = sizeof(flags_dsc_rng_l)/sizeof(flags_dsc_rng_l[0]);
         } else
         if (b_export || b_debug || b_lconf || b_tls) {
             p_flags_dsc = flags_dsc_rng;
-            n_flags = sizeof(flags_dsc_rng)/sizeof(flags_dsc_rng[0]);
         } else
         if (b_rsrc) {
             p_flags_dsc = flags_dsc_rsrc;
-            n_flags = sizeof(flags_dsc_rsrc)/sizeof(flags_dsc_rsrc[0]);
         } else
         if (b_except) {
             p_flags_dsc = flags_dsc_except;
-            n_flags = sizeof(flags_dsc_except)/sizeof(flags_dsc_except[0]);
         }
 
         rng_spec_t rng;
-        rngspc_rc_t rc = get_range_spec(&args, p_flags_dsc, n_flags, &rng);
+        rngspc_rc_t rc = get_range_spec(&args, p_flags_dsc, &rng);
         if (rc==rngspc_err) goto finish;
 
         ULONG64 rng_addr=NULL;
@@ -367,10 +360,9 @@ dump_pe_info(PDEBUG_CLIENT4 Client, PCSTR args)
 
         DWORD flags=0;
         flag_desc_t flags_dsc[] =
-            {{'m', FALSE}, {'h', FALSE}, {'d', FALSE}, {'s', FALSE}};
+            {{'m', FALSE}, {'h', FALSE}, {'d', FALSE}, {'s', FALSE}, {0}};
 
-        UINT n_flags = sizeof(flags_dsc)/sizeof(flags_dsc[0]);
-        size_t rd_sz = read_flags(args, flags_dsc, n_flags);
+        size_t rd_sz = read_flags(args, flags_dsc);
         args += rd_sz;
 
         if (flags_dsc[0].is_pres) flags|=PRNTPE_DOS_HEADER;
@@ -412,10 +404,9 @@ dump_offset_info(PDEBUG_CLIENT4 Client, PCSTR args)
     if ((get_client()->QueryInterface(
         __uuidof(IDebugSymbols), (void **)&DebugSymbols))!=S_OK) goto err;
 
-    flag_desc_t flags_dsc[] = {{'a', TRUE}, {'f', TRUE}, {'v', FALSE}};
-    UINT n_flags = sizeof(flags_dsc)/sizeof(flags_dsc[0]);
+    flag_desc_t flags_dsc[] = {{'a', TRUE}, {'f', TRUE}, {'v', FALSE}, {0}};
 
-    size_t rd_sz = read_flags(args, flags_dsc, n_flags);
+    size_t rd_sz = read_flags(args, flags_dsc);
     args += rd_sz;
 
     if (flags_dsc[0].is_pres)
@@ -487,8 +478,8 @@ dump_offset_info(PDEBUG_CLIENT4 Client, PCSTR args)
             if (get_rva_info(sectab, n_sects, rva, &sect_i, NULL, NULL, &rptr))
             {
                 char sec_name[IMAGE_SIZEOF_SHORT_NAME+1];
-                strncpy(
-                    sec_name, (char*)&sectab[sect_i].Name[0], sizeof(sec_name)-1);
+                strncpy(sec_name,
+                    (char*)&sectab[sect_i].Name[0], sizeof(sec_name)-1);
                 sec_name[sizeof(sec_name)-1] = 0;
 
                 DWORD sec_rva = get_32uint_le(&sectab[sect_i].VirtualAddress);
@@ -564,8 +555,8 @@ dump_offset_info(PDEBUG_CLIENT4 Client, PCSTR args)
             if (get_rptr_info(sectab, n_sects, rptr, &sect_i, NULL, &rva))
             {
                 char sec_name[IMAGE_SIZEOF_SHORT_NAME+1];
-                strncpy(
-                    sec_name, (char*)&sectab[sect_i].Name[0], sizeof(sec_name)-1);
+                strncpy(sec_name,
+                    (char*)&sectab[sect_i].Name[0], sizeof(sec_name)-1);
                 sec_name[sizeof(sec_name)-1] = 0;
 
                 DWORD sec_rva = get_32uint_le(&sectab[sect_i].VirtualAddress);
@@ -602,15 +593,14 @@ no_err:
                 dbgprintf("  Base address: 0x%p\n", vinfo.BaseAddress);
                 dbgprintf("  Alloc base:   0x%p\n", vinfo.AllocationBase);
                 dbgprintf("  Alloc protect:0x%08X", vinfo.AllocationProtect);
-                print_flags(
-                    MEMINFOVALS_HT, NUM_MEMINFOVALS, vinfo.AllocationProtect, 32);
+                print_flags(MEMINFOVALS_HT, vinfo.AllocationProtect, 32);
                 dbgprintf("  Region size:  0x%p\n", vinfo.RegionSize);
                 dbgprintf("  State:        0x%08X", vinfo.State);
-                print_flags(MEMINFOVALS_HT, NUM_MEMINFOVALS, vinfo.State, 32); 
+                print_flags(MEMINFOVALS_HT, vinfo.State, 32); 
                 dbgprintf("  Protect:      0x%08X", vinfo.Protect);
-                print_flags(MEMINFOVALS_HT, NUM_MEMINFOVALS, vinfo.Protect, 32); 
+                print_flags(MEMINFOVALS_HT, vinfo.Protect, 32); 
                 dbgprintf("  Type:         0x%08X", vinfo.Type);
-                print_flags(MEMINFOVALS_HT, NUM_MEMINFOVALS, vinfo.Type, 32); 
+                print_flags(MEMINFOVALS_HT, vinfo.Type, 32); 
             }
             DebugDataSpaces2->Release();
         }
@@ -631,10 +621,9 @@ dump_sects_chrt(PDEBUG_CLIENT4 Client, PCSTR args)
     set_client(Client);
 
     DWORD flags=0;
-    flag_desc_t flags_dsc[] = {{'c', TRUE}};
-    UINT n_flags = sizeof(flags_dsc)/sizeof(flags_dsc[0]);
+    flag_desc_t flags_dsc[] = {{'c', TRUE}, {0}};
 
-    size_t rd_sz = read_flags(args, flags_dsc, n_flags);
+    size_t rd_sz = read_flags(args, flags_dsc);
     args += rd_sz;
 
     if (flags_dsc[0].is_pres) flags|=PROPSC_READ_CONF;
@@ -643,7 +632,8 @@ dump_sects_chrt(PDEBUG_CLIENT4 Client, PCSTR args)
     ULONG64 mod_base = get_mod_base(&args, NULL, img_name);
     if (!mod_base || strlen(args)) goto finish;
 
-    info_dbgprintf("Base address of the module: 0x%p [%s]\n", mod_base, img_name);
+    info_dbgprintf(
+        "Base address of the module: 0x%p [%s]\n", mod_base, img_name);
     suggest_sects_chrt_name(mod_base, flags);
 
     ret=S_OK;
@@ -662,12 +652,12 @@ dump_serach(PDEBUG_CLIENT4 Client, PCSTR args)
     {
         DWORD flags = SRCHIDT_NO_ORD;
         flag_desc_t flags_dsc[] =
-            {{'x', FALSE}, {'s', TRUE}, {'r', TRUE}, {'a', TRUE}, {'l', TRUE}};
+            {{'x', FALSE}, {'s', TRUE}, {'r', TRUE}, {'a', TRUE}, {'l', TRUE},
+                {0}};
 
         rng_spec_t rng;
-        UINT n_flags = sizeof(flags_dsc)/sizeof(flags_dsc[0]);
 
-        rngspc_rc_t rc = get_range_spec(&args, flags_dsc, n_flags, &rng);
+        rngspc_rc_t rc = get_range_spec(&args, flags_dsc, &rng);
         if (rc==rngspc_err) goto finish;
 
         if (flags_dsc[0].is_pres) flags|=SRCHIDT_SILENT;

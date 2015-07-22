@@ -38,7 +38,7 @@ BOOL patch_imports(const dump_pe_hndl_t *p_hndl);
  */
 BOOL fix_iat(const dump_pe_hndl_t *p_hndl);
 
-/* Bind imports of a file 'pc_pe_file'. Return TRUE on success. */
+/* Bind imports of a file 'pc_pe_file'. Returns TRUE on success. */
 BOOL bind_imports(const char *pc_pe_file);
 
 #define PRNTIMP_IMPSPEC     0x01U

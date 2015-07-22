@@ -33,6 +33,8 @@
 #define NULL 0
 #endif
 
+#define ARRAY_SZ(a) (sizeof((a))/sizeof((a)[0]))
+
 #define RNDUP(x, d) ((d)*(((x)+((d)-1))/(d)))
 /* special cases */
 #define RNDUP_W(x)  ((((x)+1)>>1)<<1)
@@ -113,8 +115,7 @@ typedef enum _rngspc_rc_t
    by 'p_fdsc' and write the result under 'p_rng'. The func reads all recognized
    flags and modifies *p_fdsc accordingly.
  */
-rngspc_rc_t get_range_spec(
-    PCSTR *p_args, flag_desc_t *p_fdsc, UINT n_flags, rng_spec_t *p_rng);
+rngspc_rc_t get_range_spec(PCSTR *p_args, flag_desc_t *p_fdsc, rng_spec_t *p_rng);
 
 typedef enum _cpy_ret_t
 {
@@ -134,8 +135,7 @@ cpy_ret_t mem2file(FILE *f, ULONG64 mem_addr, ULONG sz);
 cpy_ret_t file2mem(ULONG64 mem_addr, FILE *f, size_t sz);
 
 /* Copy 'sz' bytes of 'f_in' (from its current position) into the file 'f_out'
-   (from its current position). If 'sz' is zero copy up to the end of the 'f_in'
-   file.
+   (from its current position). If 'sz' is zero copy up to the end of 'f_in' file.
  */
 cpy_ret_t file2file(FILE *f_out, FILE *f_in, size_t sz);
 

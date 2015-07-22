@@ -162,7 +162,10 @@ static struct
     {13313, "ar-kw"},{13321, "en-ph"},{13322, "es-cl"},{14337, "ar-ae"},
     {14346, "es-uy"},{15361, "ar-bh"},{15370, "es-py"},{16385, "ar-qa"},
     {16393, "en-in"},{16394, "es-bo"},{17418, "es-sv"},{18442, "es-hn"},
-    {19466, "es-ni"},{20490, "es-pr"}
+    {19466, "es-ni"},{20490, "es-pr"},
+
+    /* end marker */
+    {0}
 };
 
 
@@ -170,7 +173,7 @@ static struct
 static const char *get_lcid_name(UINT lcid)
 {
     const char *ret=NULL;
-    for (UINT i=0; i<sizeof(lcids)/sizeof(lcids[0]); i++)
+    for (UINT i=0; lcids[i].pc_name; i++)
         if (lcids[i].code==lcid) { ret=lcids[i].pc_name; break; }
 
     return ret;
@@ -212,8 +215,7 @@ static void init_cstats(rsrc_cap_stats_t *p_cstats)
     memset(p_cstats, 0, sizeof(*p_cstats));
 
     p_cstats->p_dir_szs = p_cstats->dir_szs;
-    p_cstats->dir_szs_sz =
-        sizeof(p_cstats->dir_szs)/sizeof(p_cstats->dir_szs[0]);
+    p_cstats->dir_szs_sz = ARRAY_SZ(p_cstats->dir_szs);
 }
 
 /* Free capacity stats struct */
@@ -265,8 +267,7 @@ static void update_cstats(
         if (level>=p_cstats->dir_szs_sz)
         {
             /* reallocation shall never happen for standard resources */
-            UINT new_dir_szs_sz = RNDUP(level+1,
-                sizeof(p_cstats->dir_szs)/sizeof(p_cstats->dir_szs[0]));
+            UINT new_dir_szs_sz = RNDUP(level+1, ARRAY_SZ(p_cstats->dir_szs));
 
             rsrc_elem_sizes_t *p_new_dir_szs =
                 (rsrc_elem_sizes_t*)malloc(sizeof(*p_new_dir_szs)*new_dir_szs_sz);
@@ -412,9 +413,9 @@ static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
                     ADDR2RVA(name_addr, p_hndl->mod_base),
                     sizeof(name_len)+name_len*sizeof(name_buf[0]));
 
-                name_len = min(name_len, sizeof(name_buf)/sizeof(name_buf[0])-1);
+                name_len = min(name_len, ARRAY_SZ(name_buf)-1);
                 if (read_memory(name_addr+sizeof(name_len),
-                    &name_buf, name_len*sizeof(name_buf[0]), &cb) &&
+                        &name_buf, name_len*sizeof(name_buf[0]), &cb) &&
                     cb==name_len*sizeof(name_buf[0]))
                 {
                     IDebugControl4 *DebugControl=NULL;
@@ -424,8 +425,8 @@ static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
                         __uuidof(IDebugControl4), (void **)&DebugControl))==S_OK)
                     {
                         DebugControl->ControlledOutputWide(
-                            DBGPRNT_OUTCTL_FLAGS, DBGPRNT_OUTPUT_FLAGS, L" \"%s\"",
-                            name_buf);
+                            DBGPRNT_OUTCTL_FLAGS, DBGPRNT_OUTPUT_FLAGS,
+                            L" \"%s\"", name_buf);
                         DebugControl->Release();
                     }
                 } else {
@@ -447,12 +448,14 @@ static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
             if (p_ent->level==lev_type)
             {
                 const char *pc_tpy_name;
-                if (pc_tpy_name=get_rsrctpy_name(id)) dbgprintf(" %s", pc_tpy_name);
+                if (pc_tpy_name=get_rsrctpy_name(id))
+                    dbgprintf(" %s", pc_tpy_name);
             } else
             if (p_ent->level==lev_lang)
             {
                 const char *pc_lcid_name;
-                if (pc_lcid_name=get_lcid_name(id)) dbgprintf(" %s", pc_lcid_name);
+                if (pc_lcid_name=get_lcid_name(id))
+                    dbgprintf(" %s", pc_lcid_name);
             }
         }
     }
@@ -487,9 +490,12 @@ static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
                 spc, nment_n, ident_n);
 
             switch (p_ent->level) {
-            case lev_root: dbgprintf("%s Types:\n", spc); break;
-            case lev_type: dbgprintf("%s Names/IDs:\n", spc); break;
-            case lev_name: dbgprintf("%s Instances [per language]:\n", spc); break;
+            case lev_root: dbgprintf("%s Types:\n", spc);
+                break;
+            case lev_type: dbgprintf("%s Names/IDs:\n", spc);
+                break;
+            case lev_name: dbgprintf("%s Instances [per language]:\n", spc);
+                break;
             }
 
             ULONG64 dir_ent_addr = ent_addr+sizeof(dir);
@@ -774,7 +780,7 @@ static init_rsrc_fix_rc_t init_rsrc_fix_hndl(
         "", prm_val, sizeof(prm_val), PROP_FILE)<=0) *prm_val=0;
 
     rsrcrv_val_t rsrcrv = (rsrcrv_val_t)get_ht_num(
-        RSRCRVVALS_HT, NUM_RSRCRVVALS, (*prm_val ? prm_val : NULL), rsrcrv_no);
+        RSRCRVVALS_HT, (*prm_val ? prm_val : NULL), rsrcrv_no);
     if (rsrcrv==rsrcrv_no) {
         ret=initrsrc_not_req;
         goto finish;
@@ -841,8 +847,8 @@ static init_rsrc_fix_rc_t init_rsrc_fix_hndl(
     if (GetPrivateProfileString(PROP_SECT_RSRCFIX, PROP_RSRCFIX_PADD,
         "", prm_val, sizeof(prm_val), PROP_FILE)<=0) *prm_val=0;
 
-    p_hndl->padd = (padd_val_t)get_ht_num
-        (PADDVALS_HT, NUM_PADDVALS, (*prm_val ? prm_val : NULL), padd_auto);
+    p_hndl->padd = (padd_val_t)get_ht_num(
+        PADDVALS_HT, (*prm_val ? prm_val : NULL), padd_auto);
 
     /* update recovered resources size */
     info_dbgprintf("Resources recovery with ");
@@ -1089,7 +1095,8 @@ static BOOL fix_rsrc_ent(rsrc_fix_hndl_t *p_hndl, const rsrc_entry_t *p_ent)
                             goto finish;
 
                     n += sizeof(sub_dir_ent);
-                    p_hndl->cstats.p_dir_szs[p_ent->level].off += sizeof(sub_dir_ent);
+                    p_hndl->cstats.p_dir_szs[p_ent->level].off +=
+                        sizeof(sub_dir_ent);
 
                     if (b_ferr=(fwrite(&sub_dir_ent, 1,
                         sizeof(sub_dir_ent), p_hndl->fh)!=sizeof(sub_dir_ent)))

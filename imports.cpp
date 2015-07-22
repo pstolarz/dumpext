@@ -154,8 +154,8 @@ enum delay_imp_attr
 
 /* Read the export directory and write the data into the structure pointed by
    'p_ed'. The func requires p_ed->mod_base to be set to the base of the module
-   whose export dir need to be read. If 'b_logs' is TRUE print error info. Return
-   TRUE for success, FALSE otherwise
+   whose export dir need to be read. If 'b_logs' is TRUE print error info.
+   Returns TRUE for success, FALSE otherwise
  */
 static BOOL get_mod_exp_dir(mod_exp_dir_t *p_ed, BOOL b_logs)
 {
@@ -265,8 +265,8 @@ finish:
     return ret;
 }
 
-/* Count how many modules from the 'p_mods' list ('n_mods' long, less or equal
-   to MAX_FRWRDS) are referenced as forwarders from the EAT table of the import
+/* Count how many modules from 'p_mods' list ('n_mods' long, less or equal to
+   MAX_FRWRDS) are referenced as forwarders from the EAT table of the import
    module with 'mod_base'. Name of the module is additionally returned under
    'pc_mod_name' (min MAX_PATH+1 long).
    The func returns TRUE on success and the count number under 'p_cnt'.
@@ -560,10 +560,10 @@ finish:
    'pc_names_buf' with the length 'names_buf_sz'. If 'p_proc_mod_base' points to
    value other than NULL, the value indicates the module base address used for
    resolving the proc_addr. If the value is NULL the owning module of the
-   proc_addr will be used. 'p_proc_mod_base' will be set to the owning module base.
-   'pc_mod_name' points to value other than NULL, it will get the owner's module
-   name. Min size of this buf is MAX_PATH+1. If 'b_logs' is TRUE print error info.
-   Returns TRUE for success, FALSE - error or 'proc_addr' not found.
+   proc_addr will be used. 'p_proc_mod_base' will be set to the owning module
+   base. 'pc_mod_name' points to value other than NULL, it will get the owner's
+   module name. Min size of this buf is MAX_PATH+1. If 'b_logs' is TRUE print
+   error info. Returns TRUE for success, FALSE - error or 'proc_addr' not found.
  */
 static BOOL get_exp_proc_info(scan_imps_hndl_t *p_hndl, ULONG64 *p_proc_mod_base,
     ULONG64 proc_addr, DWORD ords[MAX_SYNONS], DWORD hints[MAX_SYNONS],
@@ -739,7 +739,7 @@ err:
 
 /* Resolve proc name, its ord, hint and write them under 'p_out_ord', 'p_out_hint'
    and 'pc_out_proc_name' (min MAX_PATH+1 long). Number of entries with the same
-   'proc_addr' is returned under the 'p_n_synons'. Returns TRUE if the resolution
+   'proc_addr' is returned under 'p_n_synons'. Returns TRUE if the resolution
    finishes with success, FALSE otherwise.
  */
 static BOOL resv_proc_name_mod(scan_imps_hndl_t *p_hndl, ULONG64 mod_base,
@@ -895,7 +895,7 @@ finish:
     return;
 }
 
-/* Compare 2 proc; returns TRUE is the same */
+/* Compare 2 proc; returns TRUE if the same */
 inline static BOOL cmp_procs(const char *pc_proc1_name,
     DWORD proc1_ord, const char *pc_proc2_name, DWORD proc2_ord)
 {
@@ -1017,7 +1017,7 @@ finish:
     return ret;
 }
 
-/* Return current module index (1-based) */
+/* Get current module index (1-based) */
 inline static void get_mod_idx(const scan_imps_hndl_t *p_hndl, DWORD *p_mod_i)
 {
     if (p_hndl->p_imp_mods)
@@ -1192,7 +1192,7 @@ inline BOOL get_last_mod_info(const scan_imps_hndl_t *p_hndl,
 }
 
 /* Process single IAT entry element. 'mod_iat_addr' is the address of the
-   module's IAT table where the 'proc_addr' to resolve, belongs. In case of
+   module's IAT table where 'proc_addr' to resolve, belongs. In case of
    success the func returns TRUE.
  */
 static BOOL process_iat_elem(scan_imps_hndl_t *p_hndl,
@@ -1229,8 +1229,8 @@ static BOOL process_iat_elem(scan_imps_hndl_t *p_hndl,
 
     /* For performance reason proc duplicates are checked only if IAT table has
        more than one entry with the same imported address; in normal case this
-       is the only reason when there may occur duplicates in the rebuild list of
-       imports
+       is the only reason when there may occur duplicates in the rebuilt list of
+       imports.
      */
     if (n_synons>1) b_check_proc_dups=TRUE;
 
@@ -1692,7 +1692,7 @@ finish:
     if (b_fihndl) free_scan_imps_hndl(&hndl);
 }
 
-/* Search exports of the module with a name pointed by 'pc_mod_name', for the
+/* Search exports of the module with a name pointed by 'pc_mod_name' for the
    proc name with a name pointed by 'pc_proc_name'. If found TRUE is returned
    and the hint and ordinal for the proc are returned under 'p_out_hint' and
    'p_out_hint' respectively.
@@ -1732,7 +1732,7 @@ finish:
     return ret;
 }
 
-/* Read imports spec. config to populate the modules list. The 'p_iat_addr' and
+/* Read imports spec. config to populate the modules list. 'p_iat_addr' and
    'p_iat_sz' will get the memory range of the IAT table. Returns TRUE on success.
  */
 static BOOL read_imp_spec(scan_imps_hndl_t *p_hndl,
@@ -1850,9 +1850,9 @@ finish:
     return ret;
 }
 
-/* Get IDT tab length (written under 'p_idt_sz') ILT tabs size ('p_ilts_sz'),
-   hint/names tabs size, including modules names, rounded/un-rounded
-   ('p_hns_modns_sz', 'p_hns_modns_nrnd_sz') and total modules names size,
+/* Get IDT tab length (written under 'p_idt_sz'), ILT tabs size ('p_ilts_sz'),
+   hint/names tabs size (including modules names) rounded/un-rounded
+   ('p_hns_modns_sz', 'p_hns_modns_nrnd_sz') and total modules names size
    rounded/un-rounded ('p_modns_sz', 'p_modns_nrnd_sz').
  */
 static void get_continuous_idt_sizes(const imp_mod_desc_t *p_imp_mods,
@@ -2020,7 +2020,8 @@ static BOOL write_following_idt(const dump_pe_hndl_t *p_hndl,
 
         if (f_err=fseek(p_hndl->f_out, ilt_rptr, SEEK_SET)) goto finish;
 
-        for (const imp_proc_desc_t *p_proc=p_mod->proc; p_proc; p_proc=p_proc->next)
+        for (const imp_proc_desc_t *p_proc=p_mod->proc;
+            p_proc; p_proc=p_proc->next)
         {
             size_t proc_name_len = strlen(p_proc->name);
 
@@ -2066,7 +2067,8 @@ static BOOL write_following_idt(const dump_pe_hndl_t *p_hndl,
         if (f_err=fseek(p_hndl->f_out, hnt_rptr, SEEK_SET)) goto finish;
 
         size_t wrt_len;
-        for (const imp_proc_desc_t *p_proc=p_mod->proc; p_proc; p_proc=p_proc->next)
+        for (const imp_proc_desc_t *p_proc=p_mod->proc;
+            p_proc; p_proc=p_proc->next)
         {
             size_t proc_name_len = strlen(p_proc->name);
             if (proc_name_len<=0) continue;
@@ -2130,8 +2132,8 @@ finish:
    The fix is provided as a continuous block constituting of:
    1. list of IDT table (IDT table element per importing module)
    2. list of ILT tables (ILT table per importing module)
-   3. hint/name tables (single table per importing module) + importing module
-      name at the end of each table
+   3. hint/name tables (single table per importing module + importing module
+      name at the end of each table)
 
    The block starts at rva passed by 'idt_rva'. Returns TRUE if the patch has
    been written.
@@ -2246,7 +2248,8 @@ static BOOL write_continuous_idt(const dump_pe_hndl_t *p_hndl,
             if (f_err=fseek(p_hndl->f_out, iat_rptr, SEEK_SET)) goto finish;
         }
 
-        for (const imp_proc_desc_t *p_proc=p_mod->proc; p_proc; p_proc=p_proc->next)
+        for (const imp_proc_desc_t *p_proc=p_mod->proc;
+            p_proc; p_proc=p_proc->next)
         {
             size_t proc_name_len = strlen(p_proc->name);
 
@@ -2310,7 +2313,8 @@ static BOOL write_continuous_idt(const dump_pe_hndl_t *p_hndl,
         size_t wrt_len;
 
         /* write hint/name table */
-        for (const imp_proc_desc_t *p_proc=p_mod->proc; p_proc; p_proc=p_proc->next)
+        for (const imp_proc_desc_t *p_proc=p_mod->proc;
+            p_proc; p_proc=p_proc->next)
         {
             size_t proc_name_len = strlen(p_proc->name);
             if (proc_name_len<=0) continue;
@@ -2920,7 +2924,7 @@ void print_exports(ULONG64 mod_base, const rng_spec_t *p_rng)
     dbgprintf("  Ordinals table at:    0x%p[0x%08X]\n", fords_addr, fords_rva);
     dbgprintf(" Exports:\n");
 
-    if (n_fnames > sizeof(ords_tab)/sizeof(ords_tab[0]))
+    if (n_fnames > ARRAY_SZ(ords_tab))
         p_ords_tab=(WORD*)malloc(n_fnames*sizeof(*p_ords_tab));
     if (!p_ords_tab) goto finish;
 
@@ -3167,8 +3171,10 @@ void print_delay_imps(ULONG64 mod_base, const rng_spec_t *p_rng)
 
         dbgprintf("  IAT at:           0x%p[0x%08X]\n", iat_addr, iat_rva);
         dbgprintf("  ILT at:           0x%p[0x%08X]\n", ilt_addr, ilt_rva);
-        dbgprintf("  Bound IAT at:     0x%p[0x%08X]\n", iat_bnd_addr, iat_bnd_rva);
-        dbgprintf("  Unload IAT at:    0x%p[0x%08X]\n", iat_unld_addr, iat_unld_rva);
+        dbgprintf("  Bound IAT at:     0x%p[0x%08X]\n",
+            iat_bnd_addr, iat_bnd_rva);
+        dbgprintf("  Unload IAT at:    0x%p[0x%08X]\n",
+            iat_unld_addr, iat_unld_rva);
         dbgprintf("  Timestamp:        0x%08X   ; %s\n", timestamp,
             (!timestamp ? "not bound" :
             (timestamp==(DWORD)-1 ? "new-type bind" : "old-type bind")));
@@ -3319,7 +3325,8 @@ static void free_srchidt_hndl(srchidt_hndl_t *p_hndl)
         free(p_hndl->p_unord_finds);
         p_hndl->p_unord_finds = NULL;
     }
-    if (p_hndl->p_impsec_elems && p_hndl->p_impsec_elems!=&p_hndl->impsec_elems[0])
+    if (p_hndl->p_impsec_elems &&
+        p_hndl->p_impsec_elems!=&p_hndl->impsec_elems[0])
     {
         free(p_hndl->p_impsec_elems);
         p_hndl->p_impsec_elems = NULL;
@@ -3568,7 +3575,7 @@ static void analyse_impsec_lout(const srchidt_hndl_t *p_hndl, BOOL b_logs)
             gap_next = p_hndl->p_impsec_elems[i+1].rva-(rva+sz);
         }
 
-        /* detect cleared ILT rvas, as build by some compilers */
+        /* detect cleared ILT rvas, as built by some compilers */
         if (tpy==ielem_ilt && rva) b_no_ilts=FALSE;
 
         /* read continuous mod names block */

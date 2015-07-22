@@ -129,48 +129,33 @@ typedef enum _padd_val_t
     padd_auto
 } padd_val_t;
 
-extern const size_t NUM_SETVALS;
 extern const str_num_t *SETVALS_HT;
-
-extern const size_t NUM_RSRCRVVALS;
 extern const str_num_t *RSRCRVVALS_HT;
-
-extern const size_t NUM_PADDVALS;
 extern const str_num_t *PADDVALS_HT;
-
-extern const size_t NUM_SECCHRVALS;
 extern const str_num_t *SECCHRVALS_HT;
-
-extern const size_t NUM_FLCHRVALS;
 extern const str_num_t *FLCHRVALS_HT;
-
-extern const size_t NUM_DLLCHRVALS;
 extern const str_num_t *DLLCHRVALS_HT;
-
-extern const size_t NUM_MEMINFOVALS;
 extern const str_num_t *MEMINFOVALS_HT;
 
-/* Get 'num' field from a string-num hash table pointed by 'ht' with 'ht_sz'
-   elements. 'str' acts as a searching key in the table. The comparison is
-   case insensitive. If the 'str' is not found the 'def_val' is returned.
+/* Get 'num' field from a string-num hash table pointed by 'ht' (last element is
+   zeroed). 'str' acts as a searching key in the table. The comparison is case
+   insensitive. If 'str' is not found or NULL, 'def_val' is returned.
  */
-DWORD get_ht_num(
-    const str_num_t *ht, size_t ht_sz, const char *str, DWORD def_val);
+DWORD get_ht_num(const str_num_t *ht, const char *str, DWORD def_val);
 
-/* Get 'str' field from a string-num hash table pointed by 'ht' with 'ht_sz'
-   elements. 'num' acts as a searching key in the table. If the 'num' is not
-   found the 'def_val' is returned.
+/* Get 'str' field from a string-num hash table pointed by 'ht' (last element is
+   zeroed). 'num' acts as a searching key in the table. If 'num' is not
+   found 'def_val' is returned.
  */
-const char *get_ht_str(
-    const str_num_t *ht, size_t ht_sz, DWORD num, const char *def_val);
+const char *get_ht_str(const str_num_t *ht, DWORD num, const char *def_val);
 
 /* Print max 32-bit flags in the config file format */
-void print_flags(const str_num_t *ht, size_t ht_sz, DWORD flags, UINT bits);
+void print_flags(const str_num_t *ht, DWORD flags, UINT bits);
 
 /* Parse max 32-bit flags in the config file format
    NOTE: 'pc_flags' string buf is modified during parsing
  */
-DWORD parse_flags(const str_num_t *ht, size_t ht_sz, char *pc_flags);
+DWORD parse_flags(const str_num_t *ht, char *pc_flags);
 
 /* Initialize configuration */
 void init_config(HINSTANCE hinstDLL);

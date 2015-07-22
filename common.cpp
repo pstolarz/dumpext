@@ -35,8 +35,8 @@ PDEBUG_CLIENT4 get_client(void) {
         (tls_i!=TLS_OUT_OF_INDEXES ? TlsGetValue(tls_i) : NULL);
 }
 
-static void vdbgprintf(
-    ULONG ctrl, ULONG mask, const char *pc_pref, const char *format, va_list args)
+static void vdbgprintf(ULONG ctrl,
+    ULONG mask, const char *pc_pref, const char *format, va_list args)
 {
     IDebugControl *DebugControl=NULL;
 
@@ -225,16 +225,15 @@ void get_file_name(const char *pc_file_name, char *pc_buf, size_t buf_len)
 }
 
 /* exported; see header for details */
-rngspc_rc_t get_range_spec(
-    PCSTR *p_args, flag_desc_t *p_fdsc, UINT n_flags, rng_spec_t *p_rng)
+rngspc_rc_t get_range_spec(PCSTR *p_args, flag_desc_t *p_fdsc, rng_spec_t *p_rng)
 {
     rngspc_rc_t ret=rngspc_ok;
  
-    size_t rd_sz = read_flags(*p_args, p_fdsc, n_flags);
+    size_t rd_sz = read_flags(*p_args, p_fdsc);
     *p_args += rd_sz;
 
     BOOL b_rva=FALSE, b_addr=FALSE, b_len=FALSE, b_sect=FALSE;
-    for (UINT i=0; ret==rngspc_ok && i<n_flags; i++)
+    for (UINT i=0; ret==rngspc_ok && i<p_fdsc[i].c_flag; i++)
     {
         if (!p_fdsc[i].is_pres) continue;
 

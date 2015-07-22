@@ -23,15 +23,15 @@ typedef struct _flag_desc_t
     struct {
         unsigned int is_pres:  1;   /* flag has been found */
         unsigned int has_dups: 1;   /* duplicated flags occurred */
-        unsigned int has_esc:  1;   /* " or ' chars escaped inside the 'pc_arg'
+        unsigned int has_esc:  1;   /* " or ' chars escaped inside 'pc_arg'
                                        string */
     };
     size_t arg_len;     /* flag's argument length */
     char *pc_arg;       /* points to flag's argument (if arg_len>0) */
 } flag_desc_t;
 
-/* Read flags from 'pc_in' and write under 'p_dsc' table (with length 'n_fdsc').
-   Return number of read chars from the input.
+/* Read flags from 'pc_in' and write under 'p_dsc' table (last element is zeroed).
+   Returns number of read chars from the input.
 
    NOTES:
    1. Unknown flags are ignored.
@@ -39,9 +39,9 @@ typedef struct _flag_desc_t
       (and its arg) is taken into account. Duplicated flags existence is indicated
       by 'has_dups' flag.
    3. The " and ' chars may be escaped inside arg enclosed by them, but the
-      func doesn't replace them in the 'pc_in' string. The 'has_esc' flag is set
-      to indicate this case.
+      func doesn't replace them in 'pc_in' string. 'has_esc' flag is set to
+      indicate this case.
  */
-size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc, size_t n_fdsc);
+size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc);
 
 #endif /* __RDFLAGS_H__ */

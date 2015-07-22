@@ -13,14 +13,14 @@
 #include <common.h>
 
 /* exported; see header for details */
-size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc, size_t n_fdsc)
+size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc)
 {
     int state=0;
     char arg_delim;
     size_t i, j, arg_i;
 
     /* clear output fields */
-    for (j=0; j<n_fdsc; j++) {
+    for (j=0; p_fdsc[j].c_flag; j++) {
         p_fdsc[j].is_pres=0;
         p_fdsc[j].has_dups=0;
         p_fdsc[j].has_esc=0;
@@ -56,7 +56,8 @@ size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc, size_t n_fdsc)
             if (pc_in[i]=='-') {
                 /* ignore sequences of '-' (no long arg supported) */
             } else {
-                for (j=0; j<n_fdsc; j++) {
+                for (j=0; p_fdsc[j].c_flag; j++)
+                {
                     if (p_fdsc[j].c_flag==pc_in[i]) {
                         if (p_fdsc[j].is_pres) {
                             p_fdsc[j].has_dups=1;
@@ -69,7 +70,7 @@ size_t read_flags(const char *pc_in, flag_desc_t *p_fdsc, size_t n_fdsc)
                         break;
                     }
                 }
-                if (j<n_fdsc) {
+                if (p_fdsc[j].c_flag) {
                     if (p_fdsc[j].allow_arg) {
                         arg_i=j;
                         state=2;
