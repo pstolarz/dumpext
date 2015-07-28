@@ -20,7 +20,7 @@ dumpext provides a rich set of features like:
  - Support for PE CRC restore,
  - Support for originally bound imports restore,
  - Various heuristic scans (IAT/IDT) for corrupted/destroyed imports,
- - IDT table localizations,
+ - IDT table localization,
  - Imports tables fixing with full forwarders support,
  - Resources fixing,
  - Various PE headers optimizations and fixing methods (useful for advanced
@@ -47,29 +47,32 @@ dumpext: PE files fix, dump & analysis
 
 dump_imp_scan iat [-w] [[-s *|n]|[-a|-r addr -l len]] [mod_base]
     IAT imports scanning at specified memory range or of a given module with a
-    base mod_base. This is the most generic method for import scanning.
-    -s,r,a,l: Scanning range specification; that is a section number ('*' denotes
+    base mod_base. This is the most generic method for imports scanning.
+    -s,r,a,l: Scanning range specification, that is a section number ('*' denotes
         all sections) or a memory range specified by an address or rva.
     -w: Write resolved imports to the config file.
 dump_imp_scan idt [-w] [-a|-r addr [-l len]] [mod_base]
-    IDT imports scanning at specified address of the IDT table or of a given module
-    with a base mod_base. This command may be used only if IDT location is known
-    and the IDT is not corrupted.
+    IDT imports scanning at specified address of the IDT table or of a given
+    module with a base mod_base. This command may be used only if IDT location
+    is known and the IDT is not corrupted.
     -a,r,l: Specifies an address or rva of the IDT table with an optional length
         constraint.
     -w: Write resolved imports to the config file.
 
 dump_pe [-s *|n] [mod_base]
-    Dump a module with an address mod_base to a file.
+    Dump a module with an address mod_base to a file. The configuration file is
+    inspected for parameters controlling the dump (e.g. sections specification,
+    various methods of fixing etc.)
     -s: Specifies section to extract into separate file. '*' denotes all sections.
 
 dump_pe_info [header] [-m] [-h] [-d] [-s] [mod_base]
     Show PE details contained in the headers' part of a module with the address
-    mod_base.
-    -m: DOS header
-    -h: PE headers (file and optional)
-    -d: PE directories info
-    -s: Sections table
+    mod_base. If no options are provided all PE details except the DOS header
+    are printed out.
+    -m: DOS header.
+    -h: PE headers (file and optional).
+    -d: PE directories info.
+    -s: Sections table.
 dump_pe_info export|import|bimport|dimport|debug|lconf|rsrc|tls|reloc|except
              [-c|-C] [-x] [-v|-V] [-a|-r addr [-l len]] [mod_base]
     Show PE directory details at specified addr or of a given module with a base
@@ -82,26 +85,26 @@ dump_pe_info export|import|bimport|dimport|debug|lconf|rsrc|tls|reloc|except
     -l: {import,bimport,dimport,reloc,except} An optional length constraint.
 
 dump_offset_info [-v] {-a addr}|{-f ftpr [mod_base]}
-    Show address or file pointer details
-    -a: Address details
-    -f: File pointer details
+    Show address or file pointer details.
+    -a: Address details.
+    -f: File pointer details.
     -v: Show virtual memory details.
 
 dump_sects_chrt [-c] [mod_base]
-    Analyse PE headers to recognize sections names and characteristics. Print
-    the result in a format ready to use in the configuration file. Useful for
+    Analyse PE headers to recognize sections names and characteristics. Show
+    the result in the format ready to use in the configuration file. Useful for
     packers destroying mentioned data.
     -c: Read and take into account the configuration (PE headers, sections,
-        directories)
+        directories).
 
 dump_serach idt [-x] [[-s *|n]|[-a|-r addr -l len]] [mod_base]
     Search for and analyse the IDT table with IAT addresses matching the ones
     specified in the imports spec. in the config file. The command shall be used
     for searching destination location of the fixed imports with not modified
     IDT table.
-    -s,r,a,l: Searching range specification; that is a section number ('*'
+    -s,r,a,l: Searching range specification, that is a section number ('*'
         denotes all sections) or a memory range specified by an address or rva.
-    -x: Silent mode. In case of successful search the result is printed in a
+    -x: Silent mode. In case of successful search the result is printed in the
         format used by the configuration file.
 
 dump_conf [conf_file]
@@ -471,9 +474,10 @@ execute it.
 Configuration file
 ------------------
 
-dump_pe command uses a configuration file which controls its behaviour. By
-default the file is looked in the same directory as the extension library and
-under dumpext.conf name. This can be changed using dump_conf command.
+dump_pe, dump_serach idt and dump_sects_chrt (optionally) commands use a
+configuration file which controls their work. By default the file is looked in
+the same directory as the extension library under dumpext.conf name. This can be
+changed using dump_conf command.
 
 Refer to the dumpext.conf file in the source directory for more details.
 
