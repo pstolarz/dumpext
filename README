@@ -1,7 +1,7 @@
 dumpext
 =======
 
-This is a WinDbg debugger extension library providing various tools to analyse,
+This is a WinDbg debugger extension library providing various tools to analyze,
 dump and fix (restore) Microsoft Portable Executable files for both 32 (PE) and
 64-bit (PE+) platforms. The library is intended to be used by advanced reverse
 engineers and malware analysts with their work with malicious software, packers
@@ -29,16 +29,16 @@ dumpext provides a rich set of features like:
  - Dumping fixed PE file or part of the file (sections) into a file.
  - And much more...
 
-As may be seen, the features may be divided into two sets:
+The features may be divided into two sets:
  - Informational: dump_pe_info, dump_offset_info
-   which are useful for wide range of reverse engineers not specifically interested
-   in the PE packers area,
+   which are useful for wide range of reverse engineers not specifically
+   interested in the PE packers area,
  - Executive: the rest of commands; devoted mainly for PE packers analysts and
    malware reverse engineers working with malicious software using such packers
    (or other methods of PE files protections).
 
-   The library has been used for many years by the author to defeat many various
-   PE files packers (e.g. infamous ASProtect).
+The library has been used for many years by the author to defeat many various PE
+files packers (e.g. infamous ASProtect).
 
 dumpext help command output
 ---------------------------
@@ -122,15 +122,15 @@ Prerequisites:
  - Debugging Tools for Windows (WinDbg) with its SDK,
 
 Compilation:
- - Set required building environment depending on your target platform (x86/x64.
+ - Set required building environment depending on your target platform (x86/x64,
    debug/release etc.) by calling "SetEnv.Cmd" with proper arguments,
  - Inspect Makefile for your WinDbg debugger localization by setting WINDBG_DIR
    parameter and make the library:
 
    nmake
 
- - The result is dumpext.dll library located in the sources directory. Install it
-   by:
+ - The result is dumpext.dll library located in the sources directory. Install
+   it by:
 
    nmake install
 
@@ -470,6 +470,48 @@ INFO: Dumping process finished with success
 
 The dumped explorer.exe image is now located in WINDBG_DIR\dump.out. Try to
 execute it.
+
+IX. IAT scanning example for 32-bit kernel32.dll
+
+0:000> !dump_pe_info imp kernel32
+INFO: Base address of the module: 0x7c800000 [C:\WINDOWS\system32\kernel32.dll]
+INFO: IDT table at: 0x7c882600
+INFO: RVA provided in [], 'h:' denotes hints
+
+0x7c882600[0x00082600] ntdll.dll IDT Entry:
+  ILT at:          0x7c882634[0x00082634]
+  Timestamp:       0x00000000   ; not bound
+  Forwarder chain: 0x00000000
+  Module name at:  0x7c882628[0x00082628]
+  IAT at:          0x7c801000[0x00001000]
+...
+
+So, the IAT is located at 0x7c801000, RVA:0x00001000.
+Scan the kernel32 mapped memory for the IAT location:
+
+0:000> !dump_imp_scan iat kernel32
+INFO: Base address of the module being scanned: 0x7c800000 [C:\WINDOWS\system32\kernel32.dll]
+INFO: IAT scanning starts at: 0x7c801000, size constraint: 0x0624
+...
+INFO: Resolved imports are:
+[imports]
+1 = ntdll.dll
+1.iat_rva = 0x00001000
+1.1 = _wcsnicmp
+1.2 = NtFsControlFile
+1.3 = NtCreateFile
+1.4 = RtlAllocateHeap
+...
+
+So, the IAT was correctly located by the scanner (RVA:0x00001000). Note, the IAT
+scanning result is presented in the dumpext's configuration file format, ready
+to be used inside the configuration file to help PE file restoring process
+automation.
+
+The !dump_imp_scan command automatically detects most proper section to scan for
+imports by inspecting PE sections table and PE directory (try !dump_pe_info -sd
+to discover the underlaying logic). The logic is not always accurate, therefore
+!dump_imp_scan allows to specify section(s) intended to be scanned (-s option).
 
 Configuration file
 ------------------

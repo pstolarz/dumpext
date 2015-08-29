@@ -364,9 +364,9 @@ typedef enum _ownfo_tpy_t
 /* Get info string (written under 'pc_sect_info' buffer at least 100 bytes long)
    informing about owning section or header of 'ptr' pointer (type of the pointer
    indicated by 'ptrtpy'). 'p_sectab' & 'n_sects' describes sections table. If
-   'p_info_tpy' is not NULL type of returned information is written. If sz>0 then
-   additionally check inclusion in the owning section/header of a block 'sz' long
-   (starting from 'ptr').
+   'p_info_tpy' is not NULL type of returned information is written. If sz>0
+   then additionally check inclusion in the owning section/header of a block 'sz'
+   long (starting from 'ptr').
  */
 static void get_owner_info(ULONG64 mod_base, const image_nt_headers_t *p_nt_hdrs,
     char *pc_sect_info, const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects,

@@ -83,7 +83,8 @@ void *rmemchr(const void *ptr, int val, size_t num);
 /* Extract file name from full path */
 char *name_from_path(const char *pc_path);
 
-/* Retrieve file name (w/o extension) from full file name and write to 'pc_buf' */
+/* Retrieve file name (w/o extension) from full file name and write to 'pc_buf'
+ */
 void get_file_name(const char *pc_file_name, char *pc_buf, size_t buf_len);
 
 typedef struct _rng_spec_t
@@ -135,7 +136,8 @@ cpy_ret_t mem2file(FILE *f, ULONG64 mem_addr, ULONG sz);
 cpy_ret_t file2mem(ULONG64 mem_addr, FILE *f, size_t sz);
 
 /* Copy 'sz' bytes of 'f_in' (from its current position) into the file 'f_out'
-   (from its current position). If 'sz' is zero copy up to the end of 'f_in' file.
+   (from its current position). If 'sz' is zero copy up to the end of 'f_in'
+   file.
  */
 cpy_ret_t file2file(FILE *f_out, FILE *f_in, size_t sz);
 

@@ -36,8 +36,8 @@ typedef struct _flag_desc_t
    NOTES:
    1. Unknown flags are ignored.
    2. If a flag with an arg allowed, occurs more than once, the last occurrence
-      (and its arg) is taken into account. Duplicated flags existence is indicated
-      by 'has_dups' flag.
+      (and its arg) is taken into account. Duplicated flags existence is
+      indicated by 'has_dups' flag.
    3. The " and ' chars may be escaped inside arg enclosed by them, but the
       func doesn't replace them in 'pc_in' string. 'has_esc' flag is set to
       indicate this case.

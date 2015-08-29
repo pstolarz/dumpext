@@ -106,16 +106,17 @@ BOOL read_pe_headers(ULONG64 mod_base, IMAGE_DOS_HEADER *p_dos_hdr,
     image_nt_headers_t *p_nt_hdrs, ULONG64 *p_sectab_addr, BOOL b_logs);
 
 /* Read sections table located under address 'sectab_addr'. The sections are
-   written under 'p_sectab' as read from the PE file. The table must have at least
-   MAX_SECTIONS positions. Number of sections is returned. 0 means no sections or
-   error. If 'b_fix_empty_rng' is TRUE the function fixes malformed empty ranges.
+   written under 'p_sectab' as read from the PE file. The table must have at
+   least MAX_SECTIONS positions. Number of sections is returned. 0 means no
+   sections or error. If 'b_fix_empty_rng' is TRUE the function fixes malformed
+   empty ranges.
  */
 DWORD read_sectab(const image_nt_headers_t *p_nt_hdrs, ULONG64 sectab_addr,
     IMAGE_SECTION_HEADER *p_sectab, BOOL b_fix_empty_rng, BOOL b_logs);
 
 /* Find a data directory entry 'dir_id' in the optional header and write its
-   address under 'pp_dir_entry'. If 'b_logs' is TRUE print error info. Returns TRUE
-   for success.
+   address under 'pp_dir_entry'. If 'b_logs' is TRUE print error info. Returns
+   TRUE for success.
  */
 BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,
     IMAGE_DATA_DIRECTORY **pp_dir_entry, BOOL b_logs);
@@ -127,8 +128,8 @@ BOOL get_data_dir(const image_nt_headers_t *p_nt_hdrs, UINT dir_id,
      the func returns TRUE.
    - number of remaining bytes from 'rva' to the end of the owning section's raw
      data: 'p_n_raw_rem'. May be zero if the rva is behind the section's raw data.
-   - number of remaining bytes from 'rva' to the end of the owning section's data:
-     'p_n_va_rem'. Always set to a positive value if the func returns TRUE.
+   - number of remaining bytes from 'rva' to the end of the owning section's
+     data: 'p_n_va_rem'. Always set to a positive value if the func returns TRUE.
    - raw pointer (file pointer) of the RVA: 'p_rptr'. May be zero if the rva is
      behind the section's raw data.
     Returns TRUE if an owning section's of 'rva' has been found, FALSE otherwise.
@@ -151,11 +152,11 @@ BOOL get_rva_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects, DWORD rva
 BOOL get_rptr_info(const IMAGE_SECTION_HEADER *p_sectab, DWORD n_sects,
     DWORD rptr, DWORD *p_sect_i, DWORD *p_n_raw_rem, DWORD *p_rva);
 
-/* Convert RVA address 'rva' into the raw file pointer (written under 'p_raw_ptr').
-   Number of bytes from the RVA into the end of the owning section's raw data
-   is returned under 'p_n_raw_rem'. Section table used for conversion is fetched
-   from the handle 'p_hndl'. If the RVA address can not be converted FALSE is
-   returned.
+/* Convert RVA address 'rva' into the raw file pointer (written under
+   'p_raw_ptr'). Number of bytes from the RVA into the end of the owning
+   section's raw data is returned under 'p_n_raw_rem'. Section table used for
+   conversion is fetched from the handle 'p_hndl'. If the RVA address can not be
+   converted FALSE is returned.
  */
 inline BOOL get_raw_ptr(const dump_pe_hndl_t *p_hndl,
     DWORD rva, DWORD *p_raw_ptr, DWORD *p_n_raw_rem, DWORD *p_sect_i)
