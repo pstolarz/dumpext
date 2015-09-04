@@ -331,8 +331,8 @@ dump_pe_info(PDEBUG_CLIENT4 Client, PCSTR args)
         } else
         if (b_rsrc) {
             DWORD flags = 0;
-            if (p_flags_dsc[0].is_pres) flags|=PRNTRSRC_CAPAS;
-            if (p_flags_dsc[1].is_pres) flags|=PRNTRSRC_CAPAS_ONLY;
+            if (p_flags_dsc[0].is_pres) flags|=PRNTRSRC_CAPAC;
+            if (p_flags_dsc[1].is_pres) flags|=PRNTRSRC_CAPAC_ONLY;
             print_rsrc(mod_base, (rc==rngspc_not_prov ? NULL : &rng), flags);
         } else
         if (b_tls) {

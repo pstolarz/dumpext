@@ -344,7 +344,7 @@ VI. Resources tree details (trimmed output):
 
 0:000> !dump_pe_info rsrc notepad
 INFO: Base address of the module: 0x00000000ffd50000 [notepad.exe]
-INFO: Resorces at: 0x00000000ffd64000
+INFO: Resources at: 0x00000000ffd64000
 INFO: RVA provided in [], '#' precedes numeric ids
 
 0x00000000ffd64000[0x00014000] RootDir

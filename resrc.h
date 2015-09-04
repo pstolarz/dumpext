@@ -13,8 +13,8 @@
 #ifndef __DUMPEXT_RESRC_H__
 #define __DUMPEXT_RESRC_H__
 
-#define PRNTRSRC_CAPAS      0x01U
-#define PRNTRSRC_CAPAS_ONLY 0x02U
+#define PRNTRSRC_CAPAC      0x01U
+#define PRNTRSRC_CAPAC_ONLY 0x02U
 
 /* Print resources details */
 void print_rsrc(ULONG64 mod_base, const rng_spec_t *p_rng, DWORD flags);

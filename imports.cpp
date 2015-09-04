@@ -2051,7 +2051,7 @@ static BOOL write_following_idt(const dump_pe_hndl_t *p_hndl,
                     2+(b_nms_nrnd ? proc_name_len+1 : RNDUP_W(proc_name_len+1));
         }
 
-        /* last ILT table entry is zero'ed */
+        /* last ILT table entry is zeroed */
         ilt32_ent.u1.Function=0; ilt64_ent.u1.Function=0;
         if (f_err=(fwrite((p_hndl->nt_hdrs.pe_tpy==pe_32bit ?
             (void*)&ilt32_ent : (void*)&ilt64_ent),
@@ -2213,7 +2213,7 @@ static BOOL write_continuous_idt(const dump_pe_hndl_t *p_hndl,
         mod_name_rva += (b_nms_nrnd ? mod_name_len : RNDUP_W(mod_name_len));
     }
 
-    /* last imp dir elem is zero'ed */
+    /* last imp dir elem is zeroed */
     memset(&idt_ent, 0, sizeof(idt_ent));
     if (f_err=(fwrite(&idt_ent, sizeof(idt_ent), 1, p_hndl->f_out)!=1))
         goto finish;
@@ -2282,7 +2282,7 @@ static BOOL write_continuous_idt(const dump_pe_hndl_t *p_hndl,
             }
         }
 
-        /* last ILT table entry is zero'ed */
+        /* last ILT table entry is zeroed */
         ilt32_ent.u1.Function=0; ilt64_ent.u1.Function=0;
         if (f_err=(fwrite((p_hndl->nt_hdrs.pe_tpy==pe_32bit ?
             (void*)&ilt32_ent : (void*)&ilt64_ent),
@@ -3499,7 +3499,7 @@ static BOOL add_impsec_elem(srchidt_hndl_t *p_hndl,
             (p_hndl->scah.n_mods+1)*sizeof(IMAGE_IMPORT_DESCRIPTOR);
         p_hndl->p_impsec_elems[3*srch_i+3].impspec_i = 0;
 
-        /* last IDT elem should be zero'ed */
+        /* last IDT elem should be zeroed */
         ULONG cb;
         IMAGE_IMPORT_DESCRIPTOR null_ent;
         ULONG64 null_addr =
@@ -3509,7 +3509,7 @@ static BOOL add_impsec_elem(srchidt_hndl_t *p_hndl,
             cb==sizeof(null_ent)) || rmemchr(&null_ent, 0, sizeof(null_ent)))
         {
             warn_dbgprintf(
-                "IDT table is not properly finished with last zero'ed element\n");
+                "IDT table is not properly finished with last zeroed element\n");
         }
 
         /* finally sort the import sections elements */

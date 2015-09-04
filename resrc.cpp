@@ -664,17 +664,17 @@ void print_rsrc(ULONG64 mod_base, const rng_spec_t *p_rng, DWORD flags)
     if (!init_prnt_dir_hndl(
         &hndl, mod_base, IMAGE_DIRECTORY_ENTRY_RESOURCE, p_rng)) goto finish;
 
-    BOOL b_capas = (flags&PRNTRSRC_CAPAS)!=0;
-    BOOL b_capas_only = (flags&PRNTRSRC_CAPAS_ONLY)!=0;
+    BOOL b_capac = (flags&PRNTRSRC_CAPAC)!=0;
+    BOOL b_capac_only = (flags&PRNTRSRC_CAPAC_ONLY)!=0;
 
     /* print header */
     if (!hndl.dir_addr || (!p_rng && !hndl.dir_sz)) {
         info_dbgprintf("No resources in this module!\n");
         goto finish;
     } else
-        info_dbgprintf("Resorces at: 0x%p\n", hndl.dir_addr);
+        info_dbgprintf("Resources at: 0x%p\n", hndl.dir_addr);
 
-    if (!b_capas_only) {
+    if (!b_capac_only) {
         info_dbgprintf("RVA provided in [], '#' precedes numeric ids\n\n");
     }
 
@@ -684,14 +684,14 @@ void print_rsrc(ULONG64 mod_base, const rng_spec_t *p_rng, DWORD flags)
     rsrc_cap_stats_t cstats;
     init_cstats(&cstats);
 
-    if (b_capas_only) {
+    if (b_capac_only) {
         read_cstats(&hndl, &root_ent, &cstats);
     } else {
-        print_rsrc_ent(&hndl, &root_ent, (b_capas ? &cstats : NULL));
+        print_rsrc_ent(&hndl, &root_ent, (b_capac ? &cstats : NULL));
         dbgprintf("\n");
     }
 
-    if (b_capas || b_capas_only)
+    if (b_capac || b_capac_only)
     {
         if (!cstats.b_invalid) {
             info_dbgprintf("Resources contained in section(s):");
@@ -883,7 +883,7 @@ static init_rsrc_fix_rc_t init_rsrc_fix_hndl(
             dbgprintf("no padding (auto detected)\n");
         } else {
             err_dbgprintf("Can not detect proper size of resources padding due "
-                "to unsufficient resources directory size!\n");
+                "to insufficient resources directory size!\n");
             ret=initrsrc_err;
             goto finish;
         }
@@ -1175,7 +1175,7 @@ BOOL fix_rsrc(const dump_pe_hndl_t *p_hndl)
     if (!get_raw_ptr(p_hndl, ADDR2RVA(fix_hndl.dst_rsrc_addr, fix_hndl.mod_base),
         &dst_rsrc_rptr, &rsrc_n_raw_rem, NULL) || !dst_rsrc_rptr)
     {
-        err_dbgprintf("Destination resources addres 0x%p "
+        err_dbgprintf("Destination resources address 0x%p "
             "outside PE sections raw image\n", fix_hndl.dst_rsrc_addr);
         goto err;
     }
