@@ -14,7 +14,7 @@ dumpext provides a rich set of features like:
  - Support for both 32/64-bit PE files formats,
  - Informations related to virtually all PE files details like headers, sections,
    exports, imports (including delayed and bound), thread local storage (TLS),
-   relocations, resources tree, exception spec. (x64 platforms) and more...
+   relocations, resources tree, exception spec. (x64/ia64 platforms) and more...
  - Offset specific informations like memory address to RVA, owning module, file
    pointer etc.
  - Support for PE CRC restore,
@@ -119,20 +119,19 @@ Compiling and Installing
 
 Prerequisites:
  - MS SDK with cl, link and nmake; no need for MS Visual Studio,
- - Debugging Tools for Windows (WinDbg) with its SDK,
+ - Debugging Tools for Windows with its SDK,
 
 Compilation:
- - Set required building environment depending on your target platform (x86/x64,
-   debug/release etc.) by calling "SetEnv.Cmd" with proper arguments,
- - Inspect Makefile for your WinDbg debugger localization by setting WINDBG_DIR
-   parameter and make the library:
+Set required building environment depending on your target platform (x86/x64/ia64,
+debug/release etc.) by calling MS SDK "SetEnv.Cmd" script with proper arguments
+and make the library:
 
-   nmake
+  nmake
 
- - The result is dumpext.dll library located in the sources directory. Install
-   it by:
+The result is dumpext.dll library located in the sources directory. Install it
+by:
 
-   nmake install
+  nmake install
 
 Loading and some simple examples
 --------------------------------
@@ -503,7 +502,7 @@ INFO: Resolved imports are:
 1.4 = RtlAllocateHeap
 ...
 
-So, the IAT was correctly located by the scanner (RVA:0x00001000). Note, the IAT
+The IAT was correctly located by the scanner (RVA:0x00001000). Note, the IAT
 scanning result is presented in the dumpext's configuration file format, ready
 to be used inside the configuration file to help PE file restoring process
 automation.
