@@ -330,15 +330,15 @@ static void init_root_ent(rsrc_entry_t *p_ent)
 static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
     rsrc_entry_t *p_ent, rsrc_cap_stats_t *p_cstats)
 {
-    const UINT max_idents = 16;
-    const UINT ident_sz = 4;
+    const UINT max_indents = 16;
+    const UINT indent_sz = 4;
 
-    /* prepare level ident */
-    char spc[ident_sz*max_idents+1];
+    /* prepare indent level */
+    char spc[indent_sz*max_indents+1];
     memset(spc, ' ', sizeof(spc)-1);
 
-    UINT spc_sz = ident_sz*p_ent->level;
-    if (p_ent->level <= max_idents) spc[spc_sz]=0;
+    UINT spc_sz = indent_sz*p_ent->level;
+    if (p_ent->level <= max_indents) spc[spc_sz]=0;
     else spc[sizeof(spc)-1] = 0;
 
     /* entry header
@@ -351,7 +351,7 @@ static void print_rsrc_ent(const prnt_dir_hndl_t *p_hndl,
     UINT hidx_sz=0;     /* indexed header size */
     p_sup_ent=p_sup_ent->p_next;
     for (UINT i=1; p_sup_ent; i++, p_sup_ent=p_sup_ent->p_next) {
-        if (i<=max_idents) {
+        if (i<=max_indents) {
             dbgprintf((p_sup_ent->p_next ?
                 (hidx_sz+=1, ".%d") : (hidx_sz+=2, ".%d ")), p_sup_ent->level_i);
             for (UINT d=p_sup_ent->level_i; d; d/=10) hidx_sz++;
