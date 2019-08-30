@@ -1031,8 +1031,8 @@ void print_lconf(ULONG64 mod_base, const rng_spec_t *p_rng)
             get_32uint_le(&lconf.ProcessAffinityMask));
         dbgprintf("CSD version:             0x%04X\n",
             get_16uint_le(&lconf.CSDVersion));
-        dbgprintf("Reserved:                0x%04X\n",
-            get_16uint_le(&lconf.Reserved1));
+        dbgprintf("Dependent load flags:      0x%04X\n",
+            get_16uint_le(&lconf.DependentLoadFlags));
         addr = DEBUG_EXTEND64(get_32uint_le(&lconf.EditList));
         dbgprintf("Edit list at:            0x%p[0x%08X]\n",
             addr, ADDR2RVA(addr, mod_base));
@@ -1093,8 +1093,8 @@ void print_lconf(ULONG64 mod_base, const rng_spec_t *p_rng)
             get_32uint_le(&lconf.ProcessHeapFlags));
         dbgprintf("CSD version:             0x%04X\n",
             get_16uint_le(&lconf.CSDVersion));
-        dbgprintf("Reserved:                0x%04X\n",
-            get_16uint_le(&lconf.Reserved1));
+        dbgprintf("Dependent load flags:    0x%04X\n",
+            get_16uint_le(&lconf.DependentLoadFlags));
         addr = get_64uint_le(&lconf.EditList);
         dbgprintf("Edit list at:            0x%p[0x%08X]\n",
             addr, ADDR2RVA(addr, mod_base));
