@@ -5,7 +5,7 @@ CP=COPY
 
 !IFDEF PLATFORM
 PLAT=$(PLATFORM)
-!ELSEIF TARGET_CPU
+!ELSEIFDEF TARGET_CPU
 PLAT=$(TARGET_CPU)
 !ELSE
 !ERROR Target platform cannot be deduced. Make sure the MS SDK building \

@@ -28,6 +28,15 @@
  * defined here (independently of an SDK being used) and possible differences
  * are handled directly in the code.
  */
+
+typedef struct _IMAGE_LOAD_CONFIG_CODE_INTEGRITY
+{
+    WORD    Flags;          /* Flags to indicate if CI information is available, etc. */
+    WORD    Catalog;        /* 0xFFFF means not available */
+    DWORD   CatalogOffset;
+    DWORD   Reserved;       /* Additional bitmask to be defined later */
+} __IMAGE_LOAD_CONFIG_CODE_INTEGRITY, *__PIMAGE_LOAD_CONFIG_CODE_INTEGRITY;
+
 typedef struct
 {
     DWORD   Size;
@@ -56,7 +65,7 @@ typedef struct
     DWORD   GuardCFFunctionTable;           /* VA */
     DWORD   GuardCFFunctionCount;
     DWORD   GuardFlags;
-    IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
+    __IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
     DWORD   GuardAddressTakenIatEntryTable; /* VA */
     DWORD   GuardAddressTakenIatEntryCount;
     DWORD   GuardLongJumpTargetTable;       /* VA */
@@ -103,7 +112,7 @@ typedef struct
     ULONGLONG  GuardCFFunctionTable;           /* VA */
     ULONGLONG  GuardCFFunctionCount;
     DWORD      GuardFlags;
-    IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
+    __IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
     ULONGLONG  GuardAddressTakenIatEntryTable; /* VA */
     ULONGLONG  GuardAddressTakenIatEntryCount;
     ULONGLONG  GuardLongJumpTargetTable;       /* VA */
