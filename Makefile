@@ -3,34 +3,43 @@ MAKE=nmake
 RM=DEL
 CP=COPY
 
-!IF "$(TARGET_CPU)"=="x86"
-CPU_DIR=i386
-DIR_PSFIX=(x86)
-!ELSEIF "$(TARGET_CPU)"=="x64"
-CPU_DIR=amd64
-DIR_PSFIX=(x64)
-!ELSEIF "$(TARGET_CPU)"=="IA64"
-CPU_DIR=ia64
-DIR_PSFIX=(x64)
+!IFDEF PLATFORM
+PLAT=$(PLATFORM)
+!ELSEIF TARGET_CPU
+PLAT=$(TARGET_CPU)
+!ELSE
+!ERROR Target platform cannot be deduced. Make sure the MS SDK building \
+environment is set.
 !ENDIF
 
-!IFNDEF WINDBG_DIR
-WINDBG_DIR=%ProgramFiles%\Debugging Tools for Windows $(DIR_PSFIX)
+!IF "$(PLAT)"=="x86"
+PLAT_ALT=i386
+!ELSEIF "$(PLAT)"=="x64"
+PLAT_ALT=amd64
 !ENDIF
 
-!IF !DEFINED(CPU_DIR)
-!ERROR Target platform can't be deduced. Make sure the MS SDK building \
-environment is set and WINDBG_DIR is defined for non standard WinDbg \
-installation location.
+!IF EXIST("$(WINDOWSSDKDIR)\Debuggers")
+WINDBG_DIR=$(WINDOWSSDKDIR)\Debuggers
+WINDBGSDK_INC=$(WINDBG_DIR)\inc
+WINDBGSDK_LIB=$(WINDBG_DIR)\lib\$(PLAT)
+WINDBG_EXT=$(WINDBG_DIR)\$(PLAT)\winext
+!ELSEIF EXIST("$(PROGRAMFILES)\Debugging Tools for Windows ($(PLAT))")
+WINDBG_DIR=$(PROGRAMFILES)\Debugging Tools for Windows ($(PLAT))
+WINDBGSDK_INC=$(WINDBG_DIR)\sdk\inc
+WINDBGSDK_LIB=$(WINDBG_DIR)\sdk\lib\$(PLAT_ALT)
+WINDBG_EXT=$(WINDBG_DIR)\winext
+!ELSEIF EXIST("$(PROGRAMFILES) (x86)\Debugging Tools for Windows ($(PLAT))")
+WINDBG_DIR=$(PROGRAMFILES) (x86)\Debugging Tools for Windows ($(PLAT))
+WINDBGSDK_INC=$(WINDBG_DIR)\sdk\inc
+WINDBGSDK_LIB=$(WINDBG_DIR)\sdk\lib\$(PLAT_ALT)
+WINDBG_EXT=$(WINDBG_DIR)\winext
+!ELSE
+!ERROR Cannot find WinDbg installation directory.
 !ENDIF
 
-INC=-I "$(WINDBG_DIR)\sdk\inc"
-CPPFLAGS_CMN=$(INC)
+CPPFLAGS_CMN=-I"$(WINDBGSDK_INC)"
 CPPFLAGS=$(CPPFLAGS_CMN) -Yucommon.h
-
-LIB_DIR=-LIBPATH:"$(WINDBG_DIR)\sdk\lib\$(CPU_DIR)"
-LIBS=dbgeng.lib
-LDFLAGS=-DLL $(LIB_DIR) $(LIBS)
+LDFLAGS=-DLL -LIBPATH:"$(WINDBGSDK_LIB)" dbgeng.lib
 
 OBJS = rdflags.obj \
        common.obj \
@@ -46,11 +55,11 @@ all: dumpext.dll
 clean:
 	$(RM) *.obj *.dll *.exp *.lib
 
-cleanall: clean
+distclean: clean
 	$(RM) *.pch
 
 install: dumpext.dll
-	$(CP) $** "$(WINDBG_DIR)\winext"
+	$(CP) $** "$(WINDBG_EXT)"
 
 # precompiled common headers
 common.obj: common.cpp
