@@ -7,6 +7,10 @@ dump and fix (restore) Microsoft Portable Executable files for both 32 (PE) and
 engineers and malware analysts with their work with malicious software, packers
 or viruses.
 
+NOTE: Since my contact with Windows platform and the WinDbg debugger is currently
+rather occasional, the project is no more maintained. If someone is interested
+to continue work on it, feel free to contact me.
+
 Features
 --------
 
