@@ -19,7 +19,7 @@ dumpext provides a rich set of features like:
  - Support for both 32/64-bit PE files formats,
  - Informations related to virtually all PE files details like headers, sections,
    exports, imports (including delayed and bound), thread local storage (TLS),
-   relocations, resources tree, exception spec. (x64/ia64 platforms) and more...
+   relocations, resources tree, exception specification and more...
  - Offset specific informations like memory address to RVA, owning module, file
    pointer etc.
  - Support for PE CRC restore,
@@ -129,7 +129,7 @@ Prerequisites:
 
 Compilation:
 
-Set required building environment depending on your target platform (x86/x64/ia64,
+Set required building environment depending on your target platform (x86/x64,
 debug/release etc.) by calling MS SDK's `SetEnv.Cmd` script with proper arguments
 and make the library:
 
